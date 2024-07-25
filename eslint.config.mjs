@@ -18,6 +18,7 @@ export default [
       quotes: ['error', 'single'],
       'quote-props': ['error', 'as-needed'],
       'eol-last': ['error', 'always'],
+      'no-trailing-spaces': ['error'],
     },
   },
   pluginJs.configs.recommended,
