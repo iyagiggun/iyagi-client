@@ -21,7 +21,7 @@ import { getFlipHorizontalSprite } from './util';
  */
 
 /**
- * @typedef Action
+ * @typedef Motion
  * @property {SpriteImage} [image]
  * @property {boolean} [loop]
  * @property {Area[]} [hitboxes]
@@ -34,8 +34,8 @@ import { getFlipHorizontalSprite } from './util';
 /**
  * @typedef SpriteInfo
  * @property {SpriteImage} [image]
- * @property {{[key: string]: Action}} actions
- * @property {string} [base]
+ * @property {Motion} base
+ * @property {{[key: string]: Motion}} [actions]
  */
 
 const DEFAULT_ANIMATION_SPEED = 6 / FRAMES_PER_SECOND; // 10 fps
@@ -45,9 +45,8 @@ class IObjectBase {
   #sprite;
   #frameIdx = 0;
   /** @type {{[key: string]: { [key: string]: Sprite | null}}} */
-  #actions = {};
-  #action;
-  #base;
+  #motions = {};
+  #motion;
 
   #loaded = false;
   /** @type {Direction} */
@@ -62,8 +61,7 @@ class IObjectBase {
   constructor(id, sprite) {
     this.#id = id;
     this.#sprite = sprite;
-    this.#base = sprite.base ?? 'base';
-    this.#action = this.#base;
+    this.#motion = 'base';
   }
 
   /**
@@ -108,9 +106,9 @@ class IObjectBase {
   #get_sprite(dir) {
     const d = dir ?? this.#dir;
     // const sprite = this.#get_motion()[d];
-    const sprite = this.#actions[this.#action]?.[d];
+    const sprite = this.#motions[this.#motion]?.[d];
     if (!sprite) {
-      throw new Error(`Fail to get sprite. No sprite. - action: ${this.#action}, dir: ${d}`);
+      throw new Error(`Fail to get sprite. No sprite. - action: ${this.#motion}, dir: ${d}`);
     }
     return sprite;
   }
@@ -119,11 +117,18 @@ class IObjectBase {
     if (this.#loaded) {
       return;
     }
-    const promises = Object.keys(this.#sprite.actions)
+
+    /** @type {{[key: string]: Motion}} */
+    const motions = {
+      base: this.#sprite.base,
+      ...(this.#sprite.actions ?? {}),
+    };
+
+    const promises = Object.keys(motions)
       .map(async (action) => {
         const {
           up, down, left, right, image, loop,
-        } = this.#sprite.actions[action];
+        } = motions[action];
 
         const default_image = image ?? this.#sprite.image;
 
@@ -143,7 +148,7 @@ class IObjectBase {
         const right_if_left = left_sprite ? getFlipHorizontalSprite(left_sprite) : null;
         const left_if_right = right_sprite ? getFlipHorizontalSprite(right_sprite) : null;
 
-        this.#actions[action] = {
+        this.#motions[action] = {
           up: up_sprite,
           down: down_sprite,
           left: left_sprite ?? left_if_right,
@@ -164,8 +169,6 @@ class IObjectBase {
       });
 
     await Promise.all(promises);
-
-    console.error(this.#get_sprite());
 
     this.container.addChild(this.#get_sprite());
     this.#loaded = true;
