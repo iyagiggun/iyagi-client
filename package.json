@@ -14,6 +14,11 @@
       "import": "./src/object/index.js",
       "require": "./src/object/index.js",
       "types": "./types/object/index.d.ts"
+    },
+    "./const": {
+      "import": "./src/const/index.js",
+      "require": "./src/const/index.js",
+      "types": "./types/const/index.d.ts"
     }
   },
   "scripts": {

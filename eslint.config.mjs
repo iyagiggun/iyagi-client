@@ -6,7 +6,6 @@ export default [
   {
     languageOptions: { globals: globals.browser },
     rules: {
-      indent: ['error', 2],
       'object-curly-spacing': ['error', 'always'],
       'comma-dangle': ['error', {
         arrays: 'always-multiline',
@@ -19,6 +18,10 @@ export default [
       'quote-props': ['error', 'as-needed'],
       'eol-last': ['error', 'always'],
       'no-trailing-spaces': ['error'],
+      semi: ['error', 'always'],
+      indent: ['error', 2, {
+        SwitchCase: 1,
+      }],
     },
   },
   pluginJs.configs.recommended,

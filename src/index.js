@@ -1,65 +1,58 @@
 import { Application } from 'pixi.js';
+import { Scene } from './scene';
+
+/**
+ * @typedef {import('./object').default} IObject
+ */
 
 /**
  * @typedef {Object} InitParams
  * @property {WebSocket} websocket
+ * @property {{ [key:string]: () => IObject }} objectGetterMap
  */
 
-const application = new Application();
+class IClient {
 
-let inited = false;
-/** @type {WebSocket | null} */
-let ws = null;
+  #inited = false;
 
-const getWs = () => {
-  if (!ws) {
-    throw new Error('Fail to get a websocket. Inject a websocket through the init function.')
-  }
-  return ws;
-}
+  #app = new Application();
 
-const client = {
+  #ws;
+
+  #scene;
+
   /**
    * @param {InitParams} p
-   * @returns
    */
-  async init({
-    websocket,
-  }) {
-    await application.init({
+  constructor(p) {
+    this.#ws = p.websocket;
+    this.#scene = new Scene({ websocket: this.#ws, application: this.#app, objectGetterMap: p.objectGetterMap });
+  }
+
+  async init() {
+    await this.#app.init({
       backgroundColor: 0x000000,
       resizeTo: window,
     });
+    document.body.appendChild(this.#app.canvas);
+    this.#inited = true;
+  }
 
-    document.body.appendChild(application.canvas);
-    ws = websocket;
-    inited = true;
-
-    ws.addEventListener('message', (ev) => {
-      console.error('client-message-receive', ev.data);
-    })
-  },
-  get application() {
-    if (!inited) {
-      throw new Error('client is not inited.');
+  #checkInit() {
+    if (!this.#inited) {
+      throw new Error('client is not inited');
     }
-    return application;
-  },
-  scene: {
-    /**
-     * @param {string} id
-     */
-    request(id) {
-      getWs().send(JSON.stringify({
-        type: 'scene.load',
-        data: {
-          id,
-        },
-      }))
-      return 1;
+  }
 
-    },
-  },
-};
+  get application() {
+    this.#checkInit();
+    return this.#app;
+  }
 
-export default client;
+  get scene() {
+    this.#checkInit();
+    return this.#scene;
+  }
+}
+
+export default IClient;

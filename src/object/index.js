@@ -1,23 +1,67 @@
-import IObjectBase from './base';
+import { Container } from 'pixi.js';
+import IObjectLoader from './loader';
+import IObjectCoords from './coords';
 
 /**
  * @typedef IObjectParams
- * @property {string} id If there is no name, id is used as the name.
+ * @property {string} key If there is no name, the key is used as the name.
  * @property {string} [name]
- * @property {import('./base').SpriteInfo} sprite
+ * @property {import('./loader').SpriteInfo} sprite
  */
 
-class IObject extends IObjectBase {
+class IObject {
+  container = new Container();
+
+  #loader;
+
+  #coords;
+
   #name;
 
   /**
    * @param {IObjectParams} params
    */
   constructor(params) {
-    super(params.id, params.sprite);
-    this.#name = params.name ?? params.id;
+    this.#name = params.name ?? params.key;
+    this.#loader = new IObjectLoader({
+      container: this.container,
+      key: params.key,
+      sprite: params.sprite,
+    });
+    this.#coords = new IObjectCoords(this.container);
+  }
 
-    console.error(params, this.#name);
+  async load() {
+    await this.#loader.load();
+    return this;
+  }
+
+  /**
+   * @param {number} x
+   */
+  set x(x) {
+    this.#coords.set({ x });
+  }
+
+  /**
+   * @param {number} y
+   */
+  set y(y) {
+    this.#coords.set({ y });
+  }
+
+  /**
+   * @param {{x? : number, y?: number}} xy
+   */
+  set xy(xy) {
+    this.#coords.set(xy);
+  }
+
+  /**
+   * @param {{x?: number, y?: number, z?: number}} xyz
+   */
+  set xyz(xyz) {
+    this.#coords.set(xyz);
   }
 }
 

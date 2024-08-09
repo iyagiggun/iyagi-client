@@ -1,4 +1,4 @@
-import { AnimatedSprite, Assets, Container, Sprite, Spritesheet } from 'pixi.js';
+import { AnimatedSprite, Assets, Sprite, Spritesheet } from 'pixi.js';
 import { FRAMES_PER_SECOND } from '../const';
 import { getFlipHorizontalSprite } from './util';
 
@@ -40,8 +40,8 @@ import { getFlipHorizontalSprite } from './util';
 
 const DEFAULT_ANIMATION_SPEED = 6 / FRAMES_PER_SECOND; // 10 fps
 
-class IObjectBase {
-  #id;
+export default class IObjectLoader {
+  key;
   #sprite;
   #frameIdx = 0;
   /** @type {{[key: string]: { [key: string]: Sprite | null}}} */
@@ -52,15 +52,19 @@ class IObjectBase {
   /** @type {Direction} */
   #dir = 'down';
 
-  container = new Container();
+  container;
 
   /**
-   * @param {string} id
-   * @param {SpriteInfo} sprite
+   * @param {{
+   *  container: import('pixi.js').Container;
+   *  key: string;
+   *  sprite: SpriteInfo
+   * }} p
    */
-  constructor(id, sprite) {
-    this.#id = id;
-    this.#sprite = sprite;
+  constructor(p) {
+    this.container = p.container;
+    this.key = p.key;
+    this.#sprite = p.sprite;
     this.#motion = 'base';
   }
 
@@ -79,7 +83,7 @@ class IObjectBase {
     const sheet = {
       frames: options.frames.reduce((acc, frame) => ({
         ...acc,
-        [`${this.#id}:${this.#frameIdx++}`]: {
+        [`${this.key}:${this.#frameIdx++}`]: {
           frame,
         },
       }), {}),
@@ -172,7 +176,7 @@ class IObjectBase {
 
     this.container.addChild(this.#get_sprite());
     this.#loaded = true;
+
+    return;
   }
 }
-
-export default IObjectBase;

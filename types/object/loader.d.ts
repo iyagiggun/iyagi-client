@@ -1,4 +1,21 @@
-export default IObjectBase;
+export default class IObjectLoader {
+    /**
+     * @param {{
+     *  container: import('pixi.js').Container;
+     *  key: string;
+     *  sprite: SpriteInfo
+     * }} p
+     */
+    constructor(p: {
+        container: import('pixi.js').Container;
+        key: string;
+        sprite: SpriteInfo;
+    });
+    key: string;
+    container: import("pixi.js").Container<import("pixi.js").ContainerChild>;
+    load(): Promise<void>;
+    #private;
+}
 export type Area = import('../coords').Area;
 export type Direction = 'up' | 'down' | 'left' | 'right';
 export type SpriteImage = {
@@ -26,15 +43,3 @@ export type SpriteInfo = {
         [key: string]: Motion;
     } | undefined;
 };
-declare class IObjectBase {
-    /**
-     * @param {string} key
-     * @param {SpriteInfo} sprite
-     */
-    constructor(key: string, sprite: SpriteInfo);
-    key: string;
-    container: Container<import("pixi.js").ContainerChild>;
-    load(): Promise<this>;
-    #private;
-}
-import { Container } from 'pixi.js';
