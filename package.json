@@ -15,6 +15,11 @@
       "require": "./src/object/index.js",
       "types": "./types/object/index.d.ts"
     },
+    "./controller": {
+      "import": "./src/controller/index.js",
+      "require": "./src/controller/index.js",
+      "types": "./types/controller/index.d.ts"
+    },
     "./const": {
       "import": "./src/const/index.js",
       "require": "./src/const/index.js",

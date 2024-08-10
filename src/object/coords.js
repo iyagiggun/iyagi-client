@@ -21,6 +21,9 @@ export default class IObjectCoords {
     if (typeof y === 'number') {
       this.container.y = y;
     }
+    if (typeof z === 'number') {
+      this.container.zIndex = 1000 * z;
+    }
 
   }
 }

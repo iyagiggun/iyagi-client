@@ -31,7 +31,7 @@ export class Scene {
       const { type, data } = JSON.parse(msg.data);
 
       switch (type) {
-        case IMT.SCENE_LOAD: {
+        case IMT.SCENE.LOAD: {
           this.#load(data);
         }
       }
@@ -47,20 +47,23 @@ export class Scene {
    *  }[]
    * }} data
    */
-  #load(data) {
-    data.objects.map(async (info) => {
+  async #load(data) {
+    const objects = await Promise.all(data.objects.map(async (info) => {
       const getter = this.#objectGetterMap[info.key];
       if (!getter) {
-        throw new Error(`Fail to load the scene. No object. ${info.key}`);
+        new Error(`Fail to load the scene. No object. ${info.key}`);
       }
       const object = await getter().load();
-      this.#app.stage.addChild(object.container);
-
       if (info.pos) {
-        console.error(info);
         object.xyz = info.pos;
       }
+      return object;
+    }));
+
+    objects.forEach((obj) => {
+      this.#app.stage.addChild(obj.container);
     });
+    console.error('loaded');
   }
 
   /**
@@ -68,7 +71,7 @@ export class Scene {
    */
   request(id) {
     this.#ws.send(JSON.stringify({
-      type: IMT.SCENE_LOAD,
+      type: IMT.SCENE.LOAD,
       data: {
         id,
       },

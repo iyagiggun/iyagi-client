@@ -29,6 +29,13 @@ class IObject {
       sprite: params.sprite,
     });
     this.#coords = new IObjectCoords(this.container);
+
+
+    this.container.interactive = true;
+    this.container.eventMode = 'static';
+    this.container.addEventListener('touch', () => {
+      console.error('ffffffffffff');
+    });
   }
 
   async load() {
