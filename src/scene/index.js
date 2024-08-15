@@ -11,7 +11,7 @@ export class Scene {
 
   #app;
 
-  #objectGetterMap;
+  #objects;
 
   #container = new Container();
 
@@ -19,20 +19,19 @@ export class Scene {
    * @param {Object} p
    * @param {WebSocket} p.websocket
    * @param {import('pixi.js').Application} p.application
-   * @param {{ [key:string]: () => IObject }} p.objectGetterMap
+   * @param {import('../objects.js').default} p.objects
    */
   constructor({
     websocket,
     application,
-    objectGetterMap,
+    objects,
   }) {
     this.#ws = websocket;
     this.#app = application;
-    this.#objectGetterMap = objectGetterMap;
+    this.#objects = objects;
 
     this.#ws.addEventListener('message', (msg) => {
       const { type, data } = JSON.parse(msg.data);
-
       switch (type) {
         case IMT.SCENE.LOAD: {
           this.#load(data);
@@ -45,18 +44,14 @@ export class Scene {
   /**
    * @param {{
    *  objects: {
-   *    key: string;
+   *    name: string;
    *    pos?: { x?: number, y?: number, z?: number}
    *  }[]
    * }} data
    */
   async #load(data) {
     const objects = await Promise.all(data.objects.map(async (info) => {
-      const getter = this.#objectGetterMap[info.key];
-      if (!getter) {
-        new Error(`Fail to load the scene. No object. ${info.key}`);
-      }
-      const object = await getter().load();
+      const object = await this.#objects.get(info.name).load();
       if (info.pos) {
         object.xyz = info.pos;
       }

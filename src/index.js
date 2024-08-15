@@ -1,6 +1,7 @@
 import { Application, Rectangle } from 'pixi.js';
 import { Scene } from './scene/index.js';
 import { IMT } from './const/index.js';
+import Objects from './objects.js';
 
 /**
  * @typedef {import('./object/index.js').default} IObject
@@ -22,6 +23,8 @@ class IClient {
 
   #scene;
 
+  objects = new Objects();
+
   /**
    * @type {Controller | undefined}
    */
@@ -30,13 +33,12 @@ class IClient {
   /**
    * @param {{
    *  websocket: WebSocket;
-   *  objectGetterMap: { [key:string]: () => IObject };
    *  controller?: Controller
    * }} p
    */
   constructor(p) {
     this.#ws = p.websocket;
-    this.#scene = new Scene({ websocket: this.#ws, application: this.#app, objectGetterMap: p.objectGetterMap });
+    this.#scene = new Scene({ websocket: this.#ws, application: this.#app, objects: this.objects });
     this.container = p.controller;
 
     this.#ws.addEventListener('message', (msg) => {

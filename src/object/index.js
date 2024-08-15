@@ -4,8 +4,7 @@ import IObjectCoords from './coords.js';
 
 /**
  * @typedef IObjectParams
- * @property {string} key If there is no name, the key is used as the name.
- * @property {string} [name]
+ * @property {string} name
  * @property {import('./loader.js').SpriteInfo} sprite
  */
 
@@ -22,10 +21,10 @@ class IObject {
    * @param {IObjectParams} params
    */
   constructor(params) {
-    this.#name = params.name ?? params.key;
+    this.#name = params.name;
     this.#loader = new IObjectLoader({
       container: this.container,
-      key: params.key,
+      key: params.name,
       sprite: params.sprite,
     });
     this.#coords = new IObjectCoords(this.container);
@@ -34,6 +33,14 @@ class IObject {
   async load() {
     await this.#loader.load();
     return this;
+  }
+
+  set name(_) {
+    throw new Error('The name cannot be edited');
+  }
+
+  get name() {
+    return this.#name;
   }
 
   /**
@@ -68,14 +75,14 @@ class IObject {
 export class IObjectMono extends IObject {
   /**
    * @param {{
-   *  key: string;
+   *  name: string;
    *  image: string,
    *  frames: import('../coords/index.js').Area[];
    * }} p
    */
   constructor(p) {
     super({
-      key: p.key,
+      name: p.name,
       sprite: {
         image: {
           url: p.image,
