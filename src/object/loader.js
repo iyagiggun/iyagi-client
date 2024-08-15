@@ -1,9 +1,9 @@
 import { AnimatedSprite, Assets, Sprite, Spritesheet } from 'pixi.js';
-import { FRAMES_PER_SECOND } from '../const';
-import { getFlipHorizontalSprite } from './util';
+import { FRAMES_PER_SECOND } from '../const/index.js';
+import { getFlipHorizontalSprite } from './util/index.js';
 
 /**
- * @typedef {import('../coords').Area} Area
+ * @typedef {import('../coords/index.js').Area} Area
  * @typedef {'up' | 'down' | 'left' | 'right' } Direction
  */
 

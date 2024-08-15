@@ -1,26 +1,62 @@
 import { Container } from 'pixi.js';
+import Joystick from './joystick.js';
+import Gesture from './gesture.js';
 
 export default class IController {
 
-  #ws;
+  container = new Container();
 
-  layer = new Container();
+  joystick;
+
+  gesture;
+
+  #et = new EventTarget();
+
+  constructor() {
+    this.container.eventMode = 'static';
+
+    this.joystick = new Joystick({
+      container: this.container,
+      rate: 50,
+      eventTarget: this.#et,
+    });
+
+    this.gesture = new Gesture({
+      container: this.container,
+      eventTarget: this.#et,
+    });
+
+    this.container.on('touchstart', (evt) => {
+      const { x, y } = evt.global;
+      if (this.joystick.isIn(x)) {
+        this.joystick.activate({
+          pointerId: evt.pointerId,
+          start: { x, y },
+        });
+        return;
+      }
+      if (this.gesture.isIn(x)) {
+        this.gesture.activate(evt.pointerId);
+        return;
+      }
+    });
+
+    ['touchend', 'pointerout'].forEach((type) => {
+      this.container.on(type, (evt) => {
+        const { pointerId } = evt;
+        this.joystick.release(pointerId);
+        this.gesture.release(pointerId);
+      });
+    });
+
+    this.#et.dispatchEvent(new CustomEvent('dd', { detail: { dd:1 } }));
+  }
 
   /**
-   * @param {{
-   *  websocket: WebSocket;
-   * }} p
+   * @param {string} type
+   * @param {*} handler
    */
-  constructor({
-    websocket,
-  }) {
-    this.#ws = websocket;
-
-    this.layer.interactive = true;
-    this.layer.eventMode = 'static';
-
-    this.layer.on('touchstart', (evt) => {
-      console.error('start!!!');
-    });
+  addEventListener(type, handler) {
+    this.#et.addEventListener(type, handler);
   }
 }

@@ -1,7 +1,15 @@
 /**
- * @typedef Area
- * @property {number} x
- * @property {number} y
- * @property {number} w
- * @property {number} h
+ * @typedef {{
+  *  x: number;
+  *  y: number;
+  *  w: number;
+  *  h: number;
+ * }} Area
+ */
+
+/**
+ * @typedef {{
+ *  x: number;
+ *  y: number;
+ * }} Position
  */

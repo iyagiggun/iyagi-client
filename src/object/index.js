@@ -1,12 +1,12 @@
 import { Container } from 'pixi.js';
-import IObjectLoader from './loader';
-import IObjectCoords from './coords';
+import IObjectLoader from './loader.js';
+import IObjectCoords from './coords.js';
 
 /**
  * @typedef IObjectParams
  * @property {string} key If there is no name, the key is used as the name.
  * @property {string} [name]
- * @property {import('./loader').SpriteInfo} sprite
+ * @property {import('./loader.js').SpriteInfo} sprite
  */
 
 class IObject {
@@ -29,13 +29,6 @@ class IObject {
       sprite: params.sprite,
     });
     this.#coords = new IObjectCoords(this.container);
-
-
-    this.container.interactive = true;
-    this.container.eventMode = 'static';
-    this.container.addEventListener('touch', () => {
-      console.error('ffffffffffff');
-    });
   }
 
   async load() {
@@ -69,6 +62,31 @@ class IObject {
    */
   set xyz(xyz) {
     this.#coords.set(xyz);
+  }
+}
+
+export class IObjectMono extends IObject {
+  /**
+   * @param {{
+   *  key: string;
+   *  image: string,
+   *  frames: import('../coords/index.js').Area[];
+   * }} p
+   */
+  constructor(p) {
+    super({
+      key: p.key,
+      sprite: {
+        image: {
+          url: p.image,
+        },
+        base: {
+          down: {
+            frames: p.frames,
+          },
+        },
+      },
+    });
   }
 }
 

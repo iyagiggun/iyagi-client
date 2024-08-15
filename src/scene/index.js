@@ -1,7 +1,8 @@
-import { IMT } from '../const';
+import { Container } from 'pixi.js';
+import { IMT } from '../const/index.js';
 
 /**
- * @typedef {import('../object').default} IObject
+ * @typedef {import('../object/index.js').default} IObject
  */
 
 export class Scene {
@@ -11,6 +12,8 @@ export class Scene {
   #app;
 
   #objectGetterMap;
+
+  #container = new Container();
 
   /**
    * @param {Object} p
@@ -61,8 +64,10 @@ export class Scene {
     }));
 
     objects.forEach((obj) => {
-      this.#app.stage.addChild(obj.container);
+      this.#container.addChild(obj.container);
     });
+
+    this.#app.stage.addChild(this.#container);
     console.error('loaded');
   }
 
