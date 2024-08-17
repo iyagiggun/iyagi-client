@@ -15,29 +15,41 @@ export class Scene {
 
   #container = new Container();
 
+  #current;
+
   /**
-   * @param {Object} p
-   * @param {WebSocket} p.websocket
-   * @param {import('pixi.js').Application} p.application
-   * @param {import('../objects.js').default} p.objects
+   * @param {{
+   *  websocket: WebSocket;
+   *  application: import('pixi.js').Application;
+   *  objects: import('../objects.js').default;
+   *  entry: string;
+   * }} p
    */
   constructor({
     websocket,
     application,
     objects,
+    entry,
   }) {
     this.#ws = websocket;
     this.#app = application;
     this.#objects = objects;
+    this.#current = entry;
 
-    this.#ws.addEventListener('message', (msg) => {
-      const { type, data } = JSON.parse(msg.data);
-      switch (type) {
+    this.#ws.addEventListener('message', (ev) => {
+      const message = JSON.parse(ev.data);
+      switch (message.type) {
         case IMT.SCENE.LOAD: {
-          this.#load(data);
+          this.#load(message.data);
+          break;
+        }
+        case IMT.SCENE.MOVE: {
+          this.#move({
+            name: message.data.name,
+            position: message.data.position,
+          });
         }
       }
-
     });
   }
 
@@ -63,18 +75,37 @@ export class Scene {
     });
 
     this.#app.stage.addChild(this.#container);
-    console.error('loaded');
+
+    this.#ws.send(JSON.stringify({
+      type: IMT.SCENE.LOADED,
+      data: {
+        scene: this.#current,
+      },
+    }));
   }
 
-  /**
-   * @param {string} id
-   */
-  request(id) {
+  play() {
     this.#ws.send(JSON.stringify({
       type: IMT.SCENE.LOAD,
       data: {
-        id,
+        scene: this.#current,
       },
     }));
+  }
+
+  /**
+   * @param {{
+   *  name: string;
+   *  position: import('../coords/index.js').Position
+   * }} p
+   */
+  #move({
+    name,
+    position,
+  }) {
+    console.error(name, position);
+    const object = this.#objects.get(name);
+    console.error('move!!');
+    object.xy = position;
   }
 }

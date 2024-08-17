@@ -6,6 +6,8 @@ export const FRAMES_PER_SECOND = 60;
 export const IMT = {
   SCENE: {
     LOAD: 'scene.load',
+    LOADED: 'scene.loaded',
+    MOVE: 'scene.move',
   },
   CONTROLLER: {
     ENABLE: 'scene.controller.enable',

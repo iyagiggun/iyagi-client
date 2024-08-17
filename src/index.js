@@ -33,12 +33,18 @@ class IClient {
   /**
    * @param {{
    *  websocket: WebSocket;
-   *  controller?: Controller
+   *  controller?: Controller;
+   *  entry: string;
    * }} p
    */
   constructor(p) {
     this.#ws = p.websocket;
-    this.#scene = new Scene({ websocket: this.#ws, application: this.#app, objects: this.objects });
+    this.#scene = new Scene({
+      websocket: this.#ws,
+      application: this.#app,
+      objects: this.objects,
+      entry: p.entry,
+    });
     this.container = p.controller;
 
     this.#ws.addEventListener('message', (msg) => {
@@ -73,6 +79,8 @@ class IClient {
     });
     document.body.appendChild(this.#app.canvas);
     this.#inited = true;
+
+    this.scene.play();
   }
 
   #checkInit() {

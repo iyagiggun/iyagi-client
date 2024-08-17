@@ -21,8 +21,6 @@ export default class Joystick {
 
   #start = { x: 0, y: 0 };
 
-  #threshold = 25;
-
   #onTouchMove;
 
   /**
@@ -50,9 +48,6 @@ export default class Joystick {
       const deltaX = x - this.#start.x;
       const deltaY = y - this.#start.y;
       const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-      if (distance < this.#threshold) {
-        return;
-      }
       this.#et.dispatchEvent(
         new CustomEvent('move',
           {
