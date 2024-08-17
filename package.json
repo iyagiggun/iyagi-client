@@ -20,6 +20,11 @@
       "require": "./src/controller/index.js",
       "types": "./types/controller/index.d.ts"
     },
+    "./resource": {
+      "import": "./src/resource/index.js",
+      "require": "./src/resource/index.js",
+      "types": "./types/resource/index.d.ts"
+    },
     "./const": {
       "import": "./src/const/index.js",
       "require": "./src/const/index.js",

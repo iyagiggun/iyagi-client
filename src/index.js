@@ -1,7 +1,6 @@
 import { Application, Rectangle } from 'pixi.js';
 import { Scene } from './scene/index.js';
 import { IMT } from './const/index.js';
-import Objects from './objects.js';
 
 /**
  * @typedef {import('./object/index.js').default} IObject
@@ -23,8 +22,6 @@ class IClient {
 
   #scene;
 
-  objects = new Objects();
-
   /**
    * @type {Controller | undefined}
    */
@@ -42,7 +39,6 @@ class IClient {
     this.#scene = new Scene({
       websocket: this.#ws,
       application: this.#app,
-      objects: this.objects,
       entry: p.entry,
     });
     this.container = p.controller;
