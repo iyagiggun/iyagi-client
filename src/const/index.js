@@ -7,7 +7,9 @@ export const IMT = {
   SCENE: {
     LOAD: 'scene.load',
     LOADED: 'scene.loaded',
-    MOVE: 'scene.move',
+    OBJECT: {
+      MOVE: 'scene.object.move',
+    },
   },
   CONTROLLER: {
     ENABLE: 'scene.controller.enable',

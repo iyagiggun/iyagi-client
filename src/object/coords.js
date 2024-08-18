@@ -11,7 +11,7 @@ export default class IObjectCoords {
   }
 
   /**
-   * @param {{ x?: number, y?: number, z?: number }} param0
+   * @param {{ x?: number, y?: number, z?: number }} p
    */
   set({ x, y, z }) {
     // TODO : mod
@@ -24,6 +24,13 @@ export default class IObjectCoords {
     if (typeof z === 'number') {
       this.container.zIndex = 1000 * z;
     }
+  }
 
+  get() {
+    return {
+      x: this.container.x,
+      y: this.container.y,
+      z: this.container.zIndex,
+    };
   }
 }

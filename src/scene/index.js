@@ -1,6 +1,7 @@
 import { Container } from 'pixi.js';
 import { IMT } from '../const/index.js';
-import resource from '../resource/index.js';
+import SceneObject from './objects.js';
+import SceneCamera from './camera.js';
 
 /**
  * @typedef {import('../object/index.js').default} IObject
@@ -15,6 +16,10 @@ export class Scene {
   #container = new Container();
 
   #current;
+
+  object;
+
+  camera;
 
   /**
    * @param {{
@@ -31,6 +36,8 @@ export class Scene {
     this.#ws = websocket;
     this.#app = application;
     this.#current = entry;
+    this.camera = new SceneCamera(this.#app, this.#container);
+    this.object = new SceneObject(this.#app, this.camera);
 
     this.#ws.addEventListener('message', (ev) => {
       const message = JSON.parse(ev.data);
@@ -39,7 +46,7 @@ export class Scene {
           this.#load(message.data);
           break;
         }
-        case IMT.SCENE.MOVE: {
+        case IMT.SCENE.OBJECT.MOVE: {
           this.#move({
             name: message.data.name,
             position: message.data.position,
@@ -58,13 +65,7 @@ export class Scene {
    * }} data
    */
   async #load(data) {
-    const objects = await Promise.all(data.objects.map(async (info) => {
-      const object = await resource.objects.get(info.name).load();
-      if (info.pos) {
-        object.xyz = info.pos;
-      }
-      return object;
-    }));
+    const objects = await this.object.load(data);
 
     objects.forEach((obj) => {
       this.#container.addChild(obj.container);

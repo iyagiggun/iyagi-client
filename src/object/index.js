@@ -65,10 +65,25 @@ class IObject {
   }
 
   /**
+   * @return {{ x: number, y: number }};
+   */
+  get xy() {
+    const { x, y } = this.xyz;
+    return { x, y };
+  }
+
+  /**
    * @param {{x?: number, y?: number, z?: number}} xyz
    */
   set xyz(xyz) {
     this.#coords.set(xyz);
+  }
+
+  /**
+   * @return {{ x: number, y: number, z: number }}
+   */
+  get xyz() {
+    return this.#coords.get();
   }
 }
 
