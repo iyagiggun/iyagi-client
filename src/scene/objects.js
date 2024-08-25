@@ -7,18 +7,14 @@ import resource from '../resource/index.js';
 export default class SceneObject {
   #app;
 
-  #camera;
-
   /** @type {IObject[]} */
   list = [];
 
   /**
    * @param {import('pixi.js').Application} application
-   * @param {import('./camera.js').default} camera;
    */
-  constructor(application, camera) {
+  constructor(application) {
     this.#app = application;
-    this.#camera = camera;
   }
 
   /**
@@ -46,18 +42,22 @@ export default class SceneObject {
    *  name: string;
    *  position: import('../coords/index.js').Position;
    *  speed?: number;
+   *  camera?: import('./camera.js').default;
    * }} p
    */
   move({
     name,
     position,
     speed: _speed,
+    camera,
   }) {
     const target = this.list.find((obj) => obj.name === name);
     if (!target) {
       throw new Error(`Fail to move. No the object. (${name})`);
     }
     const speed = _speed ?? 1;
+
+    target.play();
 
     const tick = () => {
       const { x: curX, y: curY } = target.xy;
@@ -74,7 +74,9 @@ export default class SceneObject {
         const deltaX = speed * (diffX / distance);
         const deltaY = speed * (diffY / distance);
         target.xy = { x: curX + deltaX, y: curY + deltaY };
-        this.#camera.point(name);
+        if (camera) {
+          camera.point(name);
+        }
         // scene.objects.move(this, { x: deltaX, y: deltaY });
         // const { camera } = scene;
         // if (options?.trace) {
@@ -83,6 +85,7 @@ export default class SceneObject {
       }
 
       if (arrived) {
+        target.stop(0);
         this.#app.ticker.remove(tick);
       }
 

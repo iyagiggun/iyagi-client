@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { AnimatedSprite, Container } from 'pixi.js';
 import IObjectLoader from './loader.js';
 import IObjectCoords from './coords.js';
 
@@ -84,6 +84,30 @@ class IObject {
    */
   get xyz() {
     return this.#coords.get();
+  }
+
+  play() {
+    const sprite = this.#loader.get_sprite();
+    if ((sprite instanceof AnimatedSprite) === false) {
+      return;
+    }
+    sprite.play();
+  }
+
+
+  /**
+   * @param {number} [frameIdx]
+   */
+  stop(frameIdx) {
+    const sprite = this.#loader.get_sprite();
+    if ((sprite instanceof AnimatedSprite) === false) {
+      return;
+    }
+    if (typeof frameIdx === 'number') {
+      sprite.gotoAndStop(frameIdx);
+    } else {
+      sprite.stop();
+    }
   }
 }
 

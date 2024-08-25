@@ -107,7 +107,7 @@ export default class IObjectLoader {
   /**
    * @param {Direction} [dir]
    */
-  #get_sprite(dir) {
+  get_sprite(dir) {
     const d = dir ?? this.#dir;
     // const sprite = this.#get_motion()[d];
     const sprite = this.#motions[this.#motion]?.[d];
@@ -174,9 +174,18 @@ export default class IObjectLoader {
 
     await Promise.all(promises);
 
-    this.container.addChild(this.#get_sprite());
+    this.set_motion(this.#motion);
+
     this.#loaded = true;
 
     return;
+  }
+
+  /** @param {string} motion */
+  set_motion(motion) {
+    if (!this.#motions[motion]) {
+      throw new Error(`Fail to change sprite. No '${motion}' sprite.`);
+    }
+    this.container.addChild(this.get_sprite());
   }
 }

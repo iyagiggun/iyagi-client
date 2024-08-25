@@ -7,15 +7,12 @@ export const IMT = {
   SCENE: {
     LOAD: 'scene.load',
     LOADED: 'scene.loaded',
-    OBJECT: {
-      MOVE: 'scene.object.move',
-    },
+    TAKE: 'scene.take',
+    TAKEN: 'scene.taken',
+    ACTION: 'scene.action',
   },
   CONTROLLER: {
     ENABLE: 'scene.controller.enable',
     DISABLE: 'scene.controller.disable',
-  },
-  OBJECT: {
-    ACTION: 'object.action',
   },
 };

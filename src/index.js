@@ -98,7 +98,6 @@ class IClient {
   }
 
   get scene() {
-    this.#checkInit();
     return this.#scene;
   }
 }
