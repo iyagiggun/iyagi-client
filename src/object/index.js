@@ -1,6 +1,8 @@
 import { AnimatedSprite, Container } from 'pixi.js';
 import IObjectLoader from './loader.js';
 import IObjectCoords from './coords.js';
+import application from '../global/index.js';
+import camera from '../camera/index.js';
 
 /**
  * @typedef IObjectParams
@@ -84,6 +86,58 @@ class IObject {
    */
   get xyz() {
     return this.#coords.get();
+  }
+
+  /**
+   * @param {{
+   *  position: import('../coords/index.js').Position;
+   *  speed?: number;
+   * }} p
+   */
+  move({
+    position,
+    speed: _speed,
+  }) {
+    const speed = _speed ?? 1;
+
+    this.play();
+
+    const tick = () => {
+      const { x: curX, y: curY } = this.xy;
+
+      const diffX = position.x - curX;
+      const diffY = position.y - curY;
+      const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
+
+      const arrived = distance < speed;
+
+      if (arrived) {
+        this.xy = position;
+      } else {
+        const deltaX = speed * (diffX / distance);
+        const deltaY = speed * (diffY / distance);
+        this.xy = { x: curX + deltaX, y: curY + deltaY };
+        camera.point(this);
+        // if (camera) {
+        //   camera.point(name);
+        // }
+        // scene.objects.move(this, { x: deltaX, y: deltaY });
+        // const { camera } = scene;
+        // if (options?.trace) {
+        //   camera.point(this);
+        // }
+      }
+
+      if (arrived) {
+        this.stop(0);
+        application.app().ticker.remove(tick);
+      }
+
+    };
+    return new Promise((resolve) => {
+      application.app().ticker.add(tick);
+      resolve(1);
+    });
   }
 
   play() {

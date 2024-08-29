@@ -1,6 +1,5 @@
 /**
- * @typedef {import('./index.js').Scene} Scene
- * @typedef {(scene: Scene) => Promise<void>} TakeItem
+ * @typedef {() => Promise<void>} TakeItem
  */
 
 /** @type {{ [name: string]: TakeItem | undefined }} */

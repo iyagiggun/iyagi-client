@@ -1,99 +1,83 @@
-import { Container } from 'pixi.js';
+import application from '../global/index.js';
 import { IMT } from '../const/index.js';
-import SceneObject from './objects.js';
-import SceneCamera from './camera.js';
+import resource from '../resource/index.js';
 import take from './take.js';
+import global from '../global/index.js';
+
+/** @type { string | undefined } */
+let current;
 
 /**
- * @typedef {import('../object/index.js').default} IObject
+ * @param {{
+ *  objects: {
+ *    name: string;
+ *    pos?: { x?: number, y?: number, z?: number}
+ *  }[]
+ * }} data
  */
+const load = async (data) => {
+  const loaded = await Promise.all(data.objects.map(async (info) => {
+    const object = await resource.objects.get(info.name).load();
+    if (info.pos) {
+      object.xyz = info.pos;
+    }
+    return object;
+  }));
 
-export class Scene {
+  const stage = application.app().stage;
 
-  #ws;
+  loaded.forEach((obj) => {
+    stage.addChild(obj.container);
+  });
 
-  #app;
+  global.ws().send(JSON.stringify({
+    type: IMT.SCENE.LOADED,
+    data: {
+      scene: current,
+    },
+  }));
+};
 
-  #container = new Container();
 
-  #current;
+const play = () => {
+  global.ws().send(JSON.stringify({
+    type: IMT.SCENE.LOAD,
+    data: {
+      scene: current,
+    },
+  }));
+};
 
-  object;
+/**
+ * @param {string} entry
+ */
+const init = (entry) => {
+  const ws = global.ws();
+  current = entry;
 
-  camera;
-
-  take = take;
-
-  /**
-   * @param {{
-   *  websocket: WebSocket;
-   *  application: import('pixi.js').Application;
-   *  entry: string;
-   * }} p
-   */
-  constructor({
-    websocket,
-    application,
-    entry,
-  }) {
-    this.#ws = websocket;
-    this.#app = application;
-    this.#current = entry;
-    this.camera = new SceneCamera(this.#app, this.#container);
-    this.object = new SceneObject(this.#app);
-
-    this.#ws.addEventListener('message', async (ev) => {
-      const message = JSON.parse(ev.data);
-      switch (message.type) {
-        case IMT.SCENE.LOAD: {
-          this.#load(message.data);
-          break;
-        }
-        case IMT.SCENE.TAKE: {
-          const key = message.data.key;
-          await take.get(key)(this);
-          this.#ws.send(JSON.stringify({
-            type: IMT.SCENE.TAKEN,
-            data: {
-              key,
-            },
-          }));
-        }
+  ws.addEventListener('message', async (ev) => {
+    const message = JSON.parse(ev.data);
+    switch (message.type) {
+      case IMT.SCENE.LOAD: {
+        load(message.data);
+        break;
       }
-    });
-  }
+      case IMT.SCENE.TAKE: {
+        const key = message.data.key;
+        await take.get(key)();
+        ws.send(JSON.stringify({
+          type: IMT.SCENE.TAKEN,
+          data: {
+            key,
+          },
+        }));
+      }
+    }
+  });
+};
 
-  /**
-   * @param {{
-   *  objects: {
-   *    name: string;
-   *    pos?: { x?: number, y?: number, z?: number}
-   *  }[]
-   * }} data
-   */
-  async #load(data) {
-    const objects = await this.object.load(data);
-
-    objects.forEach((obj) => {
-      this.#container.addChild(obj.container);
-    });
-
-    this.#app.stage.addChild(this.#container);
-
-    this.#ws.send(JSON.stringify({
-      type: IMT.SCENE.LOADED,
-      data: {
-        scene: this.#current,
-      },
-    }));
-  }
-
-  play() {
-    this.#ws.send(JSON.stringify({
-      type: IMT.SCENE.LOAD,
-      data: {
-        scene: this.#current,
-      },
-    }));
-  }
-}
+export default {
+  init,
+  play,
+  load,
+};
