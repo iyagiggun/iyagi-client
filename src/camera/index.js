@@ -5,6 +5,7 @@
 
 import application from '../global/index.js';
 import resource from '../resource/index.js';
+import scene from '../scene/index.js';
 
 export default {
   /**
@@ -22,7 +23,7 @@ export default {
     const { x, y } = object.xy;
     const { width, height } = app.screen;
 
-    app.stage.x = Math.round(width / 2 - x);
-    app.stage.y = Math.round(height / 2 - y);
+    scene.container.x = Math.round(width / 2 - x);
+    scene.container.y = Math.round(height / 2 - y);
   },
 };

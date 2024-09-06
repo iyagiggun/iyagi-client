@@ -13,6 +13,8 @@ import camera from '../camera/index.js';
 class IObject {
   container = new Container();
 
+  #params;
+
   #loader;
 
   #coords;
@@ -23,6 +25,7 @@ class IObject {
    * @param {IObjectParams} params
    */
   constructor(params) {
+    this.#params = params;
     this.#name = params.name;
     this.#loader = new IObjectLoader({
       container: this.container,
@@ -99,44 +102,43 @@ class IObject {
     speed: _speed,
   }) {
     const speed = _speed ?? 1;
-
-    this.play();
-
-    const tick = () => {
-      const { x: curX, y: curY } = this.xy;
-
-      const diffX = position.x - curX;
-      const diffY = position.y - curY;
-      const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
-
-      const arrived = distance < speed;
-
-      if (arrived) {
-        this.xy = position;
-      } else {
-        const deltaX = speed * (diffX / distance);
-        const deltaY = speed * (diffY / distance);
-        this.xy = { x: curX + deltaX, y: curY + deltaY };
-        camera.point(this);
-        // if (camera) {
-        //   camera.point(name);
-        // }
-        // scene.objects.move(this, { x: deltaX, y: deltaY });
-        // const { camera } = scene;
-        // if (options?.trace) {
-        //   camera.point(this);
-        // }
-      }
-
-      if (arrived) {
-        this.stop(0);
-        application.app().ticker.remove(tick);
-      }
-
-    };
     return new Promise((resolve) => {
+
+      this.play();
+
+      const tick = () => {
+        const { x: curX, y: curY } = this.xy;
+
+        const diffX = position.x - curX;
+        const diffY = position.y - curY;
+        const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
+
+        const arrived = distance < speed;
+
+        if (arrived) {
+          this.xy = position;
+        } else {
+          const deltaX = speed * (diffX / distance);
+          const deltaY = speed * (diffY / distance);
+          this.xy = { x: curX + deltaX, y: curY + deltaY };
+          camera.point(this);
+          // if (camera) {
+          //   camera.point(name);
+          // }
+          // scene.objects.move(this, { x: deltaX, y: deltaY });
+          // const { camera } = scene;
+          // if (options?.trace) {
+          //   camera.point(this);
+          // }
+        }
+        if (arrived) {
+          this.stop(0);
+          application.app().ticker.remove(tick);
+          // @ts-ignore
+          resolve();
+        }
+      };
       application.app().ticker.add(tick);
-      resolve(1);
     });
   }
 
@@ -162,6 +164,11 @@ class IObject {
     } else {
       sprite.stop();
     }
+  }
+
+  async clone() {
+    const clone = new IObject(this.#params);
+    return await clone.load();
   }
 }
 

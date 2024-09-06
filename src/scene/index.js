@@ -1,33 +1,39 @@
-import application from '../global/index.js';
 import { IMT } from '../const/index.js';
 import resource from '../resource/index.js';
 import take from './take.js';
 import global from '../global/index.js';
+import { Container } from 'pixi.js';
 
+const container = new Container();
 /** @type { string | undefined } */
 let current;
+
+const clear = () => {
+  container.removeChildren();
+};
 
 /**
  * @param {{
  *  objects: {
  *    name: string;
- *    pos?: { x?: number, y?: number, z?: number}
+ *    pos?: { x?: number, y?: number, z?: number};
+ *    clone?: boolean;
  *  }[]
  * }} data
  */
 const load = async (data) => {
+  clear();
   const loaded = await Promise.all(data.objects.map(async (info) => {
-    const object = await resource.objects.get(info.name).load();
+    const original = await resource.objects.get(info.name);
+    const object = await (info.clone ? (await original.load()).clone() : original.load());
     if (info.pos) {
       object.xyz = info.pos;
     }
     return object;
   }));
 
-  const stage = application.app().stage;
-
   loaded.forEach((obj) => {
-    stage.addChild(obj.container);
+    container.addChild(obj.container);
   });
 
   global.ws().send(JSON.stringify({
@@ -67,9 +73,7 @@ const init = (entry) => {
         await take.get(key)();
         ws.send(JSON.stringify({
           type: IMT.SCENE.TAKEN,
-          data: {
-            key,
-          },
+          data: message.data,
         }));
       }
     }
@@ -77,6 +81,7 @@ const init = (entry) => {
 };
 
 export default {
+  container,
   init,
   play,
   load,

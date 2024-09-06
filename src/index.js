@@ -1,16 +1,19 @@
+import { Rectangle } from 'pixi.js';
+import { IMT } from './const/index.js';
 import global from './global/index.js';
 import scene from './scene/index.js';
 import take from './scene/take.js';
-
-/**
- * @typedef {import('./object/index.js').default} IObject
- */
 
 /**
  * @typedef {{
  *   container: import('pixi.js').Container
  * }} Controller
  */
+
+let inited = false;
+
+/** @type { Controller | null } */
+let controller = null;
 
 const iyagi = {
 
@@ -26,24 +29,29 @@ const iyagi = {
       websocket: p.websocket,
     });
 
-    // global.ws().addEventListener('message', (msg) => {
-    // const { type } = JSON.parse(msg.data);
+    const app = global.app();
 
-    // const app = global.app();
+    global.ws().addEventListener('message', (msg) => {
+      const { type } = JSON.parse(msg.data);
 
-    // switch (type) {
-    //   case IMT.CONTROLLER.ENABLE: {
-    //     const cc = this.#controller().container;
-    //     const { width, height } = app.screen;
-    //     cc.hitArea = new Rectangle(0, 0, width, height);
-    //     app.stage.addChild(cc);
-    //     break;
-    //   }
-    //   case IMT.CONTROLLER.DISABLE: {
-    //     app.stage.removeChild(this.#controller().container);
-    //   }
-    // }
-    // });
+      switch (type) {
+        case IMT.CONTROLLER.ENABLE: {
+          if (!controller) {
+            throw new Error('No controller.');
+          }
+          const { width, height } = app.screen;
+          const cc = controller.container;
+          cc.hitArea = new Rectangle(0, 0, width, height);
+          app.stage.addChild(cc);
+          break;
+        }
+        case IMT.CONTROLLER.DISABLE: {
+          if (this.controller) {
+            app.stage.removeChild(this.controller.container);
+          }
+        }
+      }
+    });
     // Pixi.js 애플리케이션 자동 리사이즈 처리 (옵션)
     // window.addEventListener('resize', () => {
     //   app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -51,14 +59,26 @@ const iyagi = {
     //   container.height = app.screen.height;
     //   container.hitArea = new PIXI.Rectangle(0, 0, app.screen.width, app.screen.height);
     // });
+    app.stage.addChild(scene.container);
     scene.init(p.entry);
     scene.play();
+    inited = true;
   },
   get application() {
     return global.app();
   },
   get take() {
     return take;
+  },
+  get controller() {
+    return controller;
+  },
+  /** @param { Controller | null } next */
+  set controller(next) {
+    if (inited && !next && controller && this.application.stage.children.includes(controller.container)) {
+      this.application.stage.removeChild(controller.container);
+    }
+    controller = next;
   },
 };
 
