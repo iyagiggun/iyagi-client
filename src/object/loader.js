@@ -4,7 +4,7 @@ import { getFlipHorizontalSprite } from './util/index.js';
 
 /**
  * @typedef {import('../coords/index.js').Area} Area
- * @typedef {'up' | 'down' | 'left' | 'right' } Direction
+ * @typedef {import('../coords/index.js').Direction} Direction
  */
 
 /**
@@ -46,26 +46,18 @@ export default class IObjectLoader {
   #frameIdx = 0;
   /** @type {{[key: string]: { [key: string]: Sprite | null}}} */
   #motions = {};
-  #motion;
 
   #loaded = false;
-  /** @type {Direction} */
-  #dir = 'down';
-
-  container;
 
   /**
    * @param {{
-   *  container: import('pixi.js').Container;
    *  key: string;
    *  sprite: SpriteInfo
    * }} p
    */
   constructor(p) {
-    this.container = p.container;
     this.key = p.key;
     this.#sprite = p.sprite;
-    this.#motion = 'base';
   }
 
   /**
@@ -105,14 +97,13 @@ export default class IObjectLoader {
 
 
   /**
-   * @param {Direction} [dir]
+   * @param {string} motion
+   * @param {Direction} dir
    */
-  get_sprite(dir) {
-    const d = dir ?? this.#dir;
-    // const sprite = this.#get_motion()[d];
-    const sprite = this.#motions[this.#motion]?.[d];
+  get_sprite(motion, dir) {
+    const sprite = this.#motions[motion]?.[dir];
     if (!sprite) {
-      throw new Error(`Fail to get sprite. No sprite. - action: ${this.#motion}, dir: ${d}`);
+      throw new Error(`Fail to get sprite. No sprite. - motion: ${motion}, dir: ${dir}`);
     }
     return sprite;
   }
@@ -158,34 +149,11 @@ export default class IObjectLoader {
           left: left_sprite ?? left_if_right,
           right: right_sprite ?? right_if_left,
         };
-
-        if (!down) {
-          if (up) {
-            this.#dir = 'up';
-          }
-          if (left) {
-            this.#dir = 'left';
-          }
-          if (right) {
-            this.#dir = 'right';
-          }
-        }
       });
 
     await Promise.all(promises);
-
-    this.set_motion(this.#motion);
-
     this.#loaded = true;
 
     return;
-  }
-
-  /** @param {string} motion */
-  set_motion(motion) {
-    if (!this.#motions[motion]) {
-      throw new Error(`Fail to change sprite. No '${motion}' sprite.`);
-    }
-    this.container.addChild(this.get_sprite());
   }
 }

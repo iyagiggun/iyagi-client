@@ -3,6 +3,7 @@ import IObjectLoader from './loader.js';
 import IObjectCoords from './coords.js';
 import application from '../global/index.js';
 import camera from '../camera/index.js';
+import { getDirectionByDelta } from '../coords/index.js';
 
 const DEFAULT_COMPLETE = () => undefined;
 
@@ -25,6 +26,14 @@ class IObject {
 
   #complete = DEFAULT_COMPLETE;
 
+  #motion = 'base';
+
+  /** @type { import('../coords/index.js').Direction } */
+  #dir = 'down';
+
+  /** @type { import('pixi.js').Sprite | null } */
+  #sprite = null;
+
   /**
    * @param {IObjectParams} params
    */
@@ -32,7 +41,6 @@ class IObject {
     this.#params = params;
     this.#name = params.name;
     this.#loader = new IObjectLoader({
-      container: this.container,
       key: params.name,
       sprite: params.sprite,
     });
@@ -41,6 +49,8 @@ class IObject {
 
   async load() {
     await this.#loader.load();
+    this.#sprite = this.#loader.get_sprite(this.#motion, this.#dir);
+    this.container.addChild(this.#sprite);
     return this;
   }
 
@@ -96,6 +106,35 @@ class IObject {
   }
 
   /**
+   * @param {import('../coords/index.js').Direction} dir
+   */
+  set direction(dir) {
+    switch (dir) {
+      case 'up':
+      case 'down':
+      case 'left':
+      case 'right':
+        this.#dir = dir;
+        this.#change_sprite();
+        break;
+      default:
+        throw new Error(`Fail to change direction. Invalid value. value: ${dir}`);
+    }
+  }
+
+  get direction() {
+    return this.#dir;
+  }
+
+  #change_sprite() {
+    if (this.#sprite) {
+      this.container.removeChild(this.#sprite);
+    }
+    this.#sprite = this.#loader.get_sprite(this.#motion, this.#dir);
+    this.container.addChild(this.#sprite);
+  }
+
+  /**
    * @param {{
    *  position: import('../coords/index.js').Position;
    *  speed?: number;
@@ -127,6 +166,7 @@ class IObject {
           const deltaX = speed * (diffX / distance);
           const deltaY = speed * (diffY / distance);
           this.xy = { x: curX + deltaX, y: curY + deltaY };
+          this.direction = getDirectionByDelta({ x: deltaX, y: deltaY });
           camera.point(this);
           // if (camera) {
           //   camera.point(name);
@@ -155,11 +195,10 @@ class IObject {
   }
 
   play() {
-    const sprite = this.#loader.get_sprite();
-    if ((sprite instanceof AnimatedSprite) === false) {
+    if ((this.#sprite instanceof AnimatedSprite) === false) {
       return;
     }
-    sprite.play();
+    this.#sprite.play();
   }
 
 
@@ -167,7 +206,7 @@ class IObject {
    * @param {number} [frameIdx]
    */
   stop(frameIdx) {
-    const sprite = this.#loader.get_sprite();
+    const sprite = this.#loader.get_sprite(this.#motion, this.#dir);
     if ((sprite instanceof AnimatedSprite) === false) {
       return;
     }
