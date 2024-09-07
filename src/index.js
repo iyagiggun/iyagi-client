@@ -3,10 +3,12 @@ import { IMT } from './const/index.js';
 import global from './global/index.js';
 import scene from './scene/index.js';
 import take from './scene/take.js';
+import resource from './resource/index.js';
 
 /**
  * @typedef {{
- *   container: import('pixi.js').Container
+ *  container: import('pixi.js').Container;
+ *  target: import('./object/index.js').default | null;
  * }} Controller
  */
 
@@ -32,7 +34,7 @@ const iyagi = {
     const app = global.app();
 
     global.ws().addEventListener('message', (msg) => {
-      const { type } = JSON.parse(msg.data);
+      const { type, data } = JSON.parse(msg.data);
 
       switch (type) {
         case IMT.CONTROLLER.ENABLE: {
@@ -40,6 +42,11 @@ const iyagi = {
             throw new Error('No controller.');
           }
           const { width, height } = app.screen;
+          if (data.target) {
+            controller.target = resource.objects.get(data.target);
+          } else {
+            controller.target = null;
+          }
           const cc = controller.container;
           cc.hitArea = new Rectangle(0, 0, width, height);
           app.stage.addChild(cc);

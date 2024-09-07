@@ -4,6 +4,8 @@ import IObjectCoords from './coords.js';
 import application from '../global/index.js';
 import camera from '../camera/index.js';
 
+const DEFAULT_COMPLETE = () => undefined;
+
 /**
  * @typedef IObjectParams
  * @property {string} name
@@ -20,6 +22,8 @@ class IObject {
   #coords;
 
   #name;
+
+  #complete = DEFAULT_COMPLETE;
 
   /**
    * @param {IObjectParams} params
@@ -101,6 +105,8 @@ class IObject {
     position,
     speed: _speed,
   }) {
+    this.#complete();
+
     const speed = _speed ?? 1;
     return new Promise((resolve) => {
 
@@ -132,12 +138,18 @@ class IObject {
           // }
         }
         if (arrived) {
-          this.stop(0);
-          application.app().ticker.remove(tick);
-          // @ts-ignore
-          resolve();
+          this.#complete();
         }
       };
+
+      this.#complete = () => {
+        application.app().ticker.remove(tick);
+        this.stop();
+        this.#complete = DEFAULT_COMPLETE;
+        // @ts-ignore
+        resolve();
+      };
+
       application.app().ticker.add(tick);
     });
   }

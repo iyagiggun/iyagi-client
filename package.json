@@ -15,6 +15,11 @@
       "require": "./src/object/index.js",
       "types": "./types/object/index.d.ts"
     },
+    "./camera": {
+      "import": "./src/camera/index.js",
+      "require": "./src/camera/index.js",
+      "types": "./types/camera/index.d.ts"
+    },
     "./controller": {
       "import": "./src/controller/index.js",
       "require": "./src/controller/index.js",

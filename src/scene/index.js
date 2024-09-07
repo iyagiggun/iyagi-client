@@ -44,7 +44,6 @@ const load = async (data) => {
   }));
 };
 
-
 const play = () => {
   global.ws().send(JSON.stringify({
     type: IMT.SCENE.LOAD,
