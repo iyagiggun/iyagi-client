@@ -16,6 +16,7 @@ import { getFlipHorizontalSprite } from './util/index.js';
 /**
  * @typedef ActionArea
  * @property {SpriteImage} [image]
+ * @property {import('../coords/index.js').Position} [offset]
  * @property {Area[]} frames
  * @property {Area[]} [hitboxes]
  */
@@ -23,6 +24,7 @@ import { getFlipHorizontalSprite } from './util/index.js';
 /**
  * @typedef Motion
  * @property {SpriteImage} [image]
+ * @property {import('../coords/index.js').Position} [offset]
  * @property {boolean} [loop]
  * @property {Area[]} [hitboxes]
  * @property {ActionArea} [up]
@@ -34,6 +36,7 @@ import { getFlipHorizontalSprite } from './util/index.js';
 /**
  * @typedef SpriteInfo
  * @property {SpriteImage} [image]
+ * @property {import('../coords/index.js').Position} [offset]
  * @property {Motion} base
  * @property {{[key: string]: Motion}} [actions]
  */
@@ -95,19 +98,6 @@ export default class IObjectLoader {
     return sp;
   }
 
-
-  /**
-   * @param {string} motion
-   * @param {Direction} dir
-   */
-  get_sprite(motion, dir) {
-    const sprite = this.#motions[motion]?.[dir];
-    if (!sprite) {
-      throw new Error(`Fail to get sprite. No sprite. - motion: ${motion}, dir: ${dir}`);
-    }
-    return sprite;
-  }
-
   async load() {
     if (this.#loaded) {
       return;
@@ -155,5 +145,29 @@ export default class IObjectLoader {
     this.#loaded = true;
 
     return;
+  }
+
+  /**
+   * @param {string} motion
+   * @param {Direction} dir
+   */
+  get_sprite(motion, dir) {
+    const sprite = this.#motions[motion]?.[dir];
+    if (!sprite) {
+      throw new Error(`Fail to get sprite. No sprite. - motion: ${motion}, dir: ${dir}`);
+    }
+    return sprite;
+  }
+
+  /**
+   * @param {string} motion
+   * @param {Direction} dir
+   */
+  get_offset(motion, dir) {
+    const sprite = motion === 'base' ? this.#sprite.base : this.#sprite.actions?.[motion];
+    if (!sprite) {
+      throw new Error(`Fail to get offset. No the motion. ${motion}`);
+    }
+    return this.#sprite.offset ?? sprite.offset ?? sprite[dir]?.offset;
   }
 }

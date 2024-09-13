@@ -12,14 +12,15 @@ export default class IObjectCoords {
 
   /**
    * @param {{ x?: number, y?: number, z?: number }} p
+   * @param {import('../coords/index.js').Position} [offset]
    */
-  set({ x, y, z }) {
+  set({ x, y, z }, offset) {
     // TODO : mod
     if (typeof x === 'number') {
-      this.container.x = x;
+      this.container.x = x - (offset ? offset.x : 0);
     }
     if (typeof y === 'number') {
-      this.container.y = y;
+      this.container.y = y - (offset ? offset.y : 0);
     }
     if (typeof z === 'number') {
       this.container.zIndex = 1000 * z;

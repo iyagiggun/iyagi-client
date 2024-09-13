@@ -66,21 +66,21 @@ class IObject {
    * @param {number} x
    */
   set x(x) {
-    this.#coords.set({ x });
+    this.#coords.set({ x }, this.#loader.get_offset(this.#motion, this.#dir));
   }
 
   /**
    * @param {number} y
    */
   set y(y) {
-    this.#coords.set({ y });
+    this.#coords.set({ y }, this.#loader.get_offset(this.#motion, this.#dir));
   }
 
   /**
    * @param {{x? : number, y?: number}} xy
    */
   set xy(xy) {
-    this.#coords.set(xy);
+    this.#coords.set(xy, this.#loader.get_offset(this.#motion, this.#dir));
   }
 
   /**
@@ -95,7 +95,7 @@ class IObject {
    * @param {{x?: number, y?: number, z?: number}} xyz
    */
   set xyz(xyz) {
-    this.#coords.set(xyz);
+    this.#coords.set(xyz, this.#loader.get_offset(this.#motion, this.#dir));
   }
 
   /**
@@ -228,6 +228,7 @@ export class IObjectMono extends IObject {
    * @param {{
    *  name: string;
    *  image: string,
+   *  offset?: import('../coords/index.js').Position;
    *  frames: import('../coords/index.js').Area[];
    * }} p
    */
@@ -238,6 +239,7 @@ export class IObjectMono extends IObject {
         image: {
           url: p.image,
         },
+        offset: p.offset,
         base: {
           down: {
             frames: p.frames,
