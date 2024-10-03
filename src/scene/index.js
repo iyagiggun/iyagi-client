@@ -1,8 +1,12 @@
-import { IMT } from '../const/index.js';
-import resource from '../resource/index.js';
-import take from './take.js';
-import global from '../global/index.js';
 import { Container } from 'pixi.js';
+import { IMT } from '../const/index.js';
+import reciever from '../message/reciever/index.js';
+import sender from '../message/sender/index.js';
+import resource from '../resource/index.js';
+
+/**
+ * @typedef {import('../message/reciever/index.js').Message} Message
+ */
 
 const container = new Container();
 /** @type { string | undefined } */
@@ -17,7 +21,7 @@ const clear = () => {
  *  objects: {
  *    name: string;
  *    pos?: { x?: number, y?: number, z?: number};
- *    clone?: boolean;
+ *    clone?: string;
  *  }[]
  * }} data
  */
@@ -25,7 +29,7 @@ const load = async (data) => {
   clear();
   const loaded = await Promise.all(data.objects.map(async (info) => {
     const original = await resource.objects.get(info.name);
-    const object = await (info.clone ? (await original.load()).clone() : original.load());
+    const object = await (info.clone ? (await original.load()).clone(info.clone) : original.load());
     if (info.pos) {
       object.xyz = info.pos;
     }
@@ -36,52 +40,74 @@ const load = async (data) => {
     container.addChild(obj.container);
   });
 
-  global.ws().send(JSON.stringify({
-    type: IMT.SCENE.LOADED,
-    data: {
-      scene: current,
-    },
-  }));
+  sender.scene_loaded({
+    scene: current,
+  });
+};
+
+/**
+ * @param {*} data
+ */
+const move = (data) => {
+  const target = resource.objects.get(data.target);
+  console.error('momomom' , data);
+  return target.move({ position: data.position });
 };
 
 const play = () => {
-  global.ws().send(JSON.stringify({
-    type: IMT.SCENE.LOAD,
-    data: {
-      scene: current,
-    },
-  }));
+  sender.scene_load({
+    scene: current,
+  });
+};
+
+/**
+ * @param {Message} msg
+ * @return {Promise<void>}
+ */
+const recieve = (msg) => {
+  switch(msg.type) {
+
+    case IMT.SCENE_LOAD:
+      return load(msg.data);
+
+    case IMT.MOVE:
+      return move(msg.data);
+
+    case IMT.SCENE_TAKE: {
+      const key = msg.data.key;
+      if (!key) {
+        throw new Error('Invalid "SCENE.TAKE" message. No key.');
+      }
+      /** @type {Message[]} */
+      const list = msg.data.list;
+      return list.reduce(
+        /**
+         * @param {Promise<void>} prev
+         * @param {Message} msg
+         */
+        (prev, msg) => prev.then(() => recieve(msg)), Promise.resolve())
+        .then(() => {
+          sender.scene_taken({
+            scene: current,
+            key,
+          });
+        });
+    }
+    default:
+      return Promise.resolve();
+  }
 };
 
 /**
  * @param {string} entry
  */
 const init = (entry) => {
-  const ws = global.ws();
   current = entry;
-
-  ws.addEventListener('message', async (ev) => {
-    const message = JSON.parse(ev.data);
-    switch (message.type) {
-      case IMT.SCENE.LOAD: {
-        load(message.data);
-        break;
-      }
-      case IMT.SCENE.TAKE: {
-        const key = message.data.key;
-        await take.get(key)();
-        ws.send(JSON.stringify({
-          type: IMT.SCENE.TAKEN,
-          data: message.data,
-        }));
-      }
-    }
-  });
+  reciever.add(recieve);
 };
 
 export default {
   container,
   init,
   play,
-  load,
 };

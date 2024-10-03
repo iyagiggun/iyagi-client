@@ -183,14 +183,14 @@ class IObject {
       };
 
       this.#complete = () => {
-        application.app().ticker.remove(tick);
+        application.app.ticker.remove(tick);
         this.stop();
         this.#complete = DEFAULT_COMPLETE;
         // @ts-ignore
         resolve();
       };
 
-      application.app().ticker.add(tick);
+      application.app.ticker.add(tick);
     });
   }
 
@@ -217,8 +217,16 @@ class IObject {
     }
   }
 
-  async clone() {
+  /**
+   * @param {string} key
+   */
+  async clone(key) {
+    if (!key) {
+      throw new Error('Fail to create clone. No clone value');
+    }
+    const name = `${this.#name}-clone-${key}`;
     const clone = new IObject(this.#params);
+    clone.#name = name;
     return await clone.load();
   }
 }

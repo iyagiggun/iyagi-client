@@ -10,6 +10,12 @@ const resource = {
     /**
      * @param {string} name
      */
+    contains(name) {
+      return !!objectsMap[name];
+    },
+    /**
+     * @param {string} name
+     */
     get(name) {
       const obj = objectsMap[name];
       if (!obj) {
@@ -22,7 +28,7 @@ const resource = {
      */
     add(obj) {
       if (objectsMap[obj.name]) {
-        throw new Error('It has been added with the same name.');
+        throw new Error(`Fail to add resource. Duplicated name(${obj.name}).`);
       }
       objectsMap[obj.name] = obj;
     },
