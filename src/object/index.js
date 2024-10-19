@@ -102,7 +102,13 @@ class IObject {
    * @return {{ x: number, y: number, z: number }}
    */
   get xyz() {
-    return this.#coords.get();
+    const offset = this.#loader.get_offset(this.#motion, this.#dir);
+    const { x, y, z } = this.#coords.get();
+    return {
+      x: offset ? x + offset.x : x,
+      y: offset ? y + offset.y : y,
+      z,
+    };
   }
 
   /**

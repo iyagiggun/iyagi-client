@@ -20,7 +20,7 @@ const clear = () => {
  * @param {{
  *  objects: {
  *    name: string;
- *    pos?: { x?: number, y?: number, z?: number};
+ *    position?: { x?: number, y?: number, z?: number};
  *    clone?: string;
  *  }[]
  * }} data
@@ -30,8 +30,8 @@ const load = async (data) => {
   const loaded = await Promise.all(data.objects.map(async (info) => {
     const original = await resource.objects.get(info.name);
     const object = await (info.clone ? (await original.load()).clone(info.clone) : original.load());
-    if (info.pos) {
-      object.xyz = info.pos;
+    if (info.position) {
+      object.xyz = info.position;
     }
     return object;
   }));
