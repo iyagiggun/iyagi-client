@@ -16,7 +16,7 @@ const resource = {
     /**
      * @param {string} name
      */
-    get(name) {
+    find(name) {
       const obj = objectsMap[name];
       if (!obj) {
         throw new Error(`Fail to get object. name: ${name}`);

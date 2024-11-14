@@ -3,6 +3,7 @@ import { IMT } from '../const/index.js';
 import reciever from '../message/reciever/index.js';
 import sender from '../message/sender/index.js';
 import resource from '../resource/index.js';
+import camera from '../camera/index.js';
 
 /**
  * @typedef {import('../message/reciever/index.js').Message} Message
@@ -28,7 +29,7 @@ const clear = () => {
 const load = async (data) => {
   clear();
   const loaded = await Promise.all(data.objects.map(async (info) => {
-    const original = await resource.objects.get(info.name);
+    const original = await resource.objects.find(info.name);
     const object = await (info.clone ? (await original.load()).clone(info.clone) : original.load());
     if (info.position) {
       object.xyz = info.position;
@@ -49,10 +50,29 @@ const load = async (data) => {
  * @param {*} data
  */
 const move = (data) => {
-  const target = resource.objects.get(data.target);
-  console.error('momomom' , data);
+  const target = resource.objects.find(data.target);
   return target.move({ position: data.position });
 };
+
+/**
+ * @param {*} data
+ */
+const talk = (data) => {
+  const target = resource.objects.find(data.target);
+  return target.talk(data.text);
+};
+
+/**
+ * @param {*} data
+ */
+const focus = (data) => {
+  return new Promise((resolve) => {
+    camera.point(data.target);
+    // @ts-ignore
+    resolve();
+  });
+};
+
 
 const play = () => {
   sender.scene_load({
@@ -72,6 +92,12 @@ const recieve = (msg) => {
 
     case IMT.MOVE:
       return move(msg.data);
+
+    case IMT.SCENE_TALK:
+      return talk(msg.data);
+
+    case IMT.SCENE_FOCUS:
+      return focus(msg.data);
 
     case IMT.SCENE_TAKE: {
       const key = msg.data.key;

@@ -15,6 +15,8 @@ let ws;
 let key;
 /** @type { Controller | null } */
 let controller = null;
+/** @type {import('../messenger/index.js').Messenger} */
+let messenger;
 
 const ERR_NOT_INITED = 'client has not been initialized yet.';
 
@@ -46,15 +48,22 @@ export default {
   set controller(_) {
     controller = _;
   },
+  get messenger() {
+    if (!messenger) {
+      throw new Error(ERR_NOT_INITED);
+    }
+    return messenger;
+  },
   /**
-   * @param {{
-   *  websocket: WebSocket
-   *  key: string
-   * }} p
+   * @param {Object} p
+   * @param {WebSocket} p.websocket
+   * @param {string} p.key
+   * @param {import('../messenger/index.js').Messenger} p.messenger
    */
   async init({
     websocket,
     key: _key,
+    messenger: _messenger,
   }) {
     app = new Application();
     await app.init({
@@ -64,5 +73,6 @@ export default {
     ws = websocket;
     key = _key;
     document.body.appendChild(app.canvas);
+    messenger = _messenger;
   },
 };

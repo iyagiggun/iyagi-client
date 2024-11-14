@@ -1,6 +1,7 @@
 import global from './global/index.js';
 import reciever from './message/reciever/index.js';
 import sender from './message/sender/index.js';
+import imessenger from './messenger/index.js';
 import scene from './scene/index.js';
 
 /** @typedef {import('./global/index.js').Controller} Controller */
@@ -20,6 +21,7 @@ const iyagi = {
     await global.init({
       websocket: p.websocket,
       key: p.key,
+      messenger: imessenger,
     });
 
     const app = global.app;

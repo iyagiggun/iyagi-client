@@ -41,7 +41,7 @@ const init = (ws) => {
         }
         const { width, height } = app.screen;
         if (data.target) {
-          controller.target = resource.objects.get(data.target);
+          controller.target = resource.objects.find(data.target);
         } else {
           controller.target = null;
         }

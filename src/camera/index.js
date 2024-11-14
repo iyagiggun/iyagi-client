@@ -14,7 +14,7 @@ export default {
   point(target) {
     const object = (() => {
       if (typeof target === 'string') {
-        return resource.objects.get(target);
+        return resource.objects.find(target);
       }
       return target;
     })();

@@ -4,6 +4,7 @@ import IObjectCoords from './coords.js';
 import application from '../global/index.js';
 import camera from '../camera/index.js';
 import { getDirectionByDelta } from '../coords/index.js';
+import global from '../global/index.js';
 
 const DEFAULT_COMPLETE = () => undefined;
 
@@ -198,6 +199,13 @@ class IObject {
 
       application.app.ticker.add(tick);
     });
+  }
+
+  /**
+   * @param {string} text
+   */
+  talk(text) {
+    return global.messenger.show({ speaker: this, text });
   }
 
   play() {
