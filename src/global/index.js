@@ -15,7 +15,7 @@ let ws;
 let key;
 /** @type { Controller | null } */
 let controller = null;
-/** @type {import('../messenger/index.js').Messenger} */
+/** @type {import('../imessenger/index.js').Messenger} */
 let messenger;
 
 const ERR_NOT_INITED = 'client has not been initialized yet.';
@@ -58,7 +58,7 @@ export default {
    * @param {Object} p
    * @param {WebSocket} p.websocket
    * @param {string} p.key
-   * @param {import('../messenger/index.js').Messenger} p.messenger
+   * @param {import('../imessenger/index.js').Messenger} p.messenger
    */
   async init({
     websocket,

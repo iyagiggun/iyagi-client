@@ -1,7 +1,7 @@
 import global from './global/index.js';
 import reciever from './message/reciever/index.js';
 import sender from './message/sender/index.js';
-import imessenger from './messenger/index.js';
+import imessenger from './imessenger/index.js';
 import scene from './scene/index.js';
 
 /** @typedef {import('./global/index.js').Controller} Controller */

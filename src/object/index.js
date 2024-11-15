@@ -5,6 +5,7 @@ import application from '../global/index.js';
 import camera from '../camera/index.js';
 import { getDirectionByDelta } from '../coords/index.js';
 import global from '../global/index.js';
+import { Portrait } from './portrait.js';
 
 const DEFAULT_COMPLETE = () => undefined;
 
@@ -12,11 +13,10 @@ const DEFAULT_COMPLETE = () => undefined;
  * @typedef IObjectParams
  * @property {string} name
  * @property {import('./loader.js').SpriteInfo} sprite
+ * @property {import('./portrait.js').PortraitParams=} portraits
  */
 
 class IObject {
-  container = new Container();
-
   #params;
 
   #loader;
@@ -39,6 +39,8 @@ class IObject {
    * @param {IObjectParams} params
    */
   constructor(params) {
+    this.container = new Container();
+
     this.#params = params;
     this.#name = params.name;
     this.#loader = new IObjectLoader({
@@ -46,10 +48,12 @@ class IObject {
       sprite: params.sprite,
     });
     this.#coords = new IObjectCoords(this.container);
+
+    this.portrait = new Portrait(params.portraits);
   }
 
   async load() {
-    await this.#loader.load();
+    await Promise.all([this.#loader.load(), this.portrait.load()]);
     this.#sprite = this.#loader.get_sprite(this.#motion, this.#dir);
     this.container.addChild(this.#sprite);
     return this;

@@ -31,6 +31,7 @@ const getMessageStyle = (width) => new TextStyle({
  * @typedef {Object} MessageShowParams
  * @property {import('../object/index.js').default} speaker
  * @property {string} text
+ * @property {string=} portrait
  */
 
 /**
@@ -42,7 +43,7 @@ const getMessageStyle = (width) => new TextStyle({
 /**
  * @param {MessageShowParams} p
  */
-const show = ({ speaker, text }) => {
+const show = ({ speaker, text, portrait: pKey }) => {
   const application = global.app;
   const appWidth = application.screen.width;
   const appHeight = application.screen.height;
@@ -66,25 +67,25 @@ const show = ({ speaker, text }) => {
   upper.eventMode = 'static';
 
   // const { photo } = speaker;
-  const photo = undefined;
+  const portrait = speaker.portrait.get(pKey);
   const name = new Text({ text: speaker.name, style: NAME_STYLE });
   const token = new Text({ text: '' });
 
-  if (photo) {
-    // const photoSize = Math.min(144, Math.min(appWidth, appHeight) / 2);
-    // photo.width = photoSize;
-    // photo.height = photoSize;
-    // photo.x = 12;
-    // photo.y = bg.y + bg.height - photoSize - 12;
-    // container.addChild(photo);
+  if (portrait) {
+    const photoSize = Math.min(144, Math.min(appWidth, appHeight) / 2);
+    portrait.width = photoSize;
+    portrait.height = photoSize;
+    portrait.x = 12;
+    portrait.y = bg.y + bg.height - photoSize - 12;
+    container.addChild(portrait);
 
-    // name.x = photo.x + photo.width + 12;
-    // name.y = bg.y + 6;
-    // container.addChild(name);
-    // token.style = getMessageStyle(bg.width - photoSize - 36);
-    // token.x = photo.x + photo.width + 12;
-    // token.y = name.y + name.height + 6;
-    // container.addChild(token);
+    name.x = portrait.x + portrait.width + 12;
+    name.y = bg.y + 6;
+    container.addChild(name);
+    token.style = getMessageStyle(bg.width - photoSize - 36);
+    token.x = portrait.x + portrait.width + 12;
+    token.y = name.y + name.height + 6;
+    container.addChild(token);
   } else {
     name.x = 12;
     name.y = bg.y + 6;
