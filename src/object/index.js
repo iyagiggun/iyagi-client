@@ -125,6 +125,9 @@ class IObject {
       case 'down':
       case 'left':
       case 'right':
+        if (this.#dir === dir) {
+          return;
+        }
         this.#dir = dir;
         this.#change_sprite();
         break;
@@ -138,10 +141,22 @@ class IObject {
   }
 
   #change_sprite() {
-    if (this.#sprite) {
-      this.container.removeChild(this.#sprite);
+    const last = this.#sprite;
+    const next = this.#loader.get_sprite(this.#motion, this.#dir);
+    if (last === next) {
+      return;
     }
-    this.#sprite = this.#loader.get_sprite(this.#motion, this.#dir);
+    if (last instanceof AnimatedSprite && next instanceof AnimatedSprite) {
+      next.animationSpeed = last.animationSpeed;
+      if (last.playing) {
+        last.stop();
+        next.play();
+      }
+    }
+    if (last) {
+      this.container.removeChild(last);
+    }
+    this.#sprite = next;
     this.container.addChild(this.#sprite);
   }
 
@@ -219,19 +234,17 @@ class IObject {
     this.#sprite.play();
   }
 
-
   /**
-   * @param {number} [frameIdx]
+   * @param {number=} frameIdx
    */
   stop(frameIdx) {
-    const sprite = this.#loader.get_sprite(this.#motion, this.#dir);
-    if ((sprite instanceof AnimatedSprite) === false) {
+    if ((this.#sprite instanceof AnimatedSprite) === false) {
       return;
     }
     if (typeof frameIdx === 'number') {
-      sprite.gotoAndStop(frameIdx);
+      this.#sprite.gotoAndStop(frameIdx);
     } else {
-      sprite.stop();
+      this.#sprite.stop();
     }
   }
 
