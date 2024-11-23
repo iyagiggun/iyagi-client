@@ -18,7 +18,6 @@ import { getFlipHorizontalSprite } from './util/index.js';
  * @property {SpriteImage} [image]
  * @property {import('../coords/index.js').Position} [offset]
  * @property {Area[]} frames
- * @property {Area[]} [hitboxes]
  */
 
 /**
@@ -26,7 +25,6 @@ import { getFlipHorizontalSprite } from './util/index.js';
  * @property {SpriteImage} [image]
  * @property {import('../coords/index.js').Position} [offset]
  * @property {boolean} [loop]
- * @property {Area[]} [hitboxes]
  * @property {ActionArea} [up]
  * @property {ActionArea} [down]
  * @property {ActionArea} [left]

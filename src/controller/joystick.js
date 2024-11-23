@@ -114,12 +114,14 @@ export default class Joystick {
    * @returns
    */
   release(pointerId) {
-    window.clearInterval(this.#intervalId);
-    if (pointerId !== this.#pointerId) {
+    if (pointerId !== this.#pointerId || this.#pointerId < 0) {
       return;
     }
+    window.clearInterval(this.#intervalId);
+    this.#intervalId = 0;
     if (performance.now() - this.#activateTime < 200) {
       this.#et.dispatchEvent(new CustomEvent('interact'));
+      return;
     }
     this.#container.removeEventListener('touchmove', this.#onTouchMove);
     // player.application.ticker.remove(tick);

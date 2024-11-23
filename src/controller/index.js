@@ -44,6 +44,10 @@ export default class IController {
       }
     });
 
+    /**
+     * Touchend and pointerout can occur together.
+     * It means that event handler may be executed twice.
+     */
     ['touchend', 'pointerout'].forEach((type) => {
       this.container.on(type, (evt) => {
         const { pointerId } = evt;

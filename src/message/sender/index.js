@@ -13,6 +13,18 @@ const sender = {
     }));
   },
   /**
+   * @param {import('../../object/index.js').default} target
+   */
+  interact(target) {
+    global.ws.send(JSON.stringify({
+      key: global.key,
+      type: IMT.SCENE_INTERACT,
+      data: {
+        target: target.name,
+      },
+    }));
+  },
+  /**
    * @param {*} data
    */
   scene_load(data) {

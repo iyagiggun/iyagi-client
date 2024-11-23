@@ -95,7 +95,7 @@ export default class Gesture {
    * @param {number} pointerId
    */
   release(pointerId) {
-    if (pointerId !== this.#pointerId) {
+    if (pointerId !== this.#pointerId || this.#pointerId < 0) {
       return;
     }
     if (this.#gestureList.length === 0) {

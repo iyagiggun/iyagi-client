@@ -1,9 +1,10 @@
-import { Container } from 'pixi.js';
+import { Container, Rectangle } from 'pixi.js';
 import { IMT } from '../const/index.js';
 import reciever from '../message/reciever/index.js';
 import sender from '../message/sender/index.js';
 import resource from '../resource/index.js';
 import camera from '../camera/index.js';
+import global from '../global/index.js';
 
 /**
  * @typedef {import('../message/reciever/index.js').Message} Message
@@ -73,6 +74,27 @@ const focus = (data) => {
   });
 };
 
+/**
+ * @param {*} data
+ */
+const control = (data) => {
+  const { controller, app } = global;
+  if (!controller) {
+    throw new Error('No controller.');
+  }
+  const { width, height } = app.screen;
+  if (data.target) {
+    controller.target = resource.objects.find(data.target);
+  } else {
+    controller.target = null;
+  }
+  const cc = controller.container;
+  cc.hitArea = new Rectangle(0, 0, width, height);
+  app.stage.addChild(cc);
+
+  return Promise.resolve();
+};
+
 
 const play = () => {
   sender.scene_load({
@@ -98,6 +120,9 @@ const recieve = (msg) => {
 
     case IMT.SCENE_FOCUS:
       return focus(msg.data);
+
+    case IMT.SCENE_CONTROL:
+      return control(msg.data);
 
     case IMT.SCENE_TAKE: {
       const key = msg.data.key;

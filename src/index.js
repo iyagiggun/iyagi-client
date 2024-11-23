@@ -58,6 +58,7 @@ const iyagi = {
   get messenger() {
     return {
       move: sender.move,
+      interact: sender.interact,
     };
   },
 };

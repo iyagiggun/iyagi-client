@@ -8,6 +8,8 @@ export const IMT = {
   SCENE_TAKEN: 'scene.taken',
   SCENE_TALK: 'scene.talk',
   SCENE_FOCUS: 'scene.focus',
+  SCENE_CONTROL: 'scene.control',
+  SCENE_INTERACT: 'scene.interact',
 
   CONTROLLER_ENABLE: 'controller.enable',
   CONTROLLER_DISABLE: 'controller.disable',
