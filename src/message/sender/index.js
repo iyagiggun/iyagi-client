@@ -8,7 +8,7 @@ const sender = {
   move(data) {
     global.ws.send(JSON.stringify({
       key: global.key,
-      type: IMT.MOVE,
+      type: IMT.SCENE_MOVE,
       data,
     }));
   },

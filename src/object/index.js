@@ -3,7 +3,6 @@ import IObjectLoader from './loader.js';
 import IObjectCoords from './coords.js';
 import application from '../global/index.js';
 import camera from '../camera/index.js';
-import { getDirectionByDelta } from '../coords/index.js';
 import global from '../global/index.js';
 import { Portrait } from './portrait.js';
 
@@ -192,7 +191,6 @@ class IObject {
           const deltaX = speed * (diffX / distance);
           const deltaY = speed * (diffY / distance);
           this.xy = { x: curX + deltaX, y: curY + deltaY };
-          this.direction = getDirectionByDelta({ x: deltaX, y: deltaY });
           camera.point(this);
           // if (camera) {
           //   camera.point(name);

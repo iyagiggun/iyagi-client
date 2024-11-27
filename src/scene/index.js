@@ -52,6 +52,10 @@ const load = async (data) => {
  */
 const move = (data) => {
   const target = resource.objects.find(data.target);
+  const direction = data.direction;
+  if (direction) {
+    target.direction = direction;
+  }
   return target.move({ position: data.position });
 };
 
@@ -112,7 +116,7 @@ const recieve = (msg) => {
     case IMT.SCENE_LOAD:
       return load(msg.data);
 
-    case IMT.MOVE:
+    case IMT.SCENE_MOVE:
       return move(msg.data);
 
     case IMT.SCENE_TALK:
