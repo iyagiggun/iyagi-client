@@ -34,22 +34,22 @@ const init = (ws) => {
 
     switch (type) {
 
-      case IMT.CONTROLLER_ENABLE: {
-        const controller = global.controller;
-        if (!controller) {
-          throw new Error('No controller.');
-        }
-        const { width, height } = app.screen;
-        if (data.target) {
-          controller.target = resource.objects.find(data.target);
-        } else {
-          controller.target = null;
-        }
-        const cc = controller.container;
-        cc.hitArea = new Rectangle(0, 0, width, height);
-        app.stage.addChild(cc);
-        break;
-      }
+      // case IMT.CONTROLLER_ENABLE: {
+      //   const controller = global.controller;
+      //   if (!controller) {
+      //     throw new Error('No controller.');
+      //   }
+      //   const { width, height } = app.screen;
+      //   if (data.target) {
+      //     controller.target = resource.objects.find(data.target);
+      //   } else {
+      //     controller.target = null;
+      //   }
+      //   const cc = controller.container;
+      //   cc.hitArea = new Rectangle(0, 0, width, height);
+      //   app.stage.addChild(cc);
+      //   break;
+      // }
 
       case IMT.CONTROLLER_DISABLE: {
         if (global.controller) {

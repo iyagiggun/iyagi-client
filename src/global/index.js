@@ -3,7 +3,7 @@ import { Application } from 'pixi.js';
 /**
  * @typedef {{
 *  container: import('pixi.js').Container;
-*  target: import('../object/index.js').default | null;
+*  target: import('../object/index.js').IObject | null;
 * }} Controller
 */
 

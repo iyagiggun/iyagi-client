@@ -1,6 +1,6 @@
 const MAX_Z_INDEX = 999;
 
-export default class IObjectCoords {
+export default class Coordinate {
   container;
 
   z = 1;
@@ -15,7 +15,7 @@ export default class IObjectCoords {
 
   /**
    * @param {{ x?: number, y?: number, z?: number }} p
-   * @param {import('../coords/index.js').Position} [offset]
+   * @param {import('../texture.js').Position} [offset]
    */
   set({ x, y, z }, offset) {
     // TODO : mod

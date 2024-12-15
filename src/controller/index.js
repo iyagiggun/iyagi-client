@@ -10,7 +10,7 @@ export default class IController {
 
   gesture;
 
-  /** @type { import('../object/index.js').default | null } */
+  /** @type { import('../object/index.js').IObject | null } */
   target = null;
 
   #et = new EventTarget();

@@ -11,8 +11,12 @@ import global from '../global/index.js';
  */
 
 const container = new Container();
+
 /** @type { string | undefined } */
 let current;
+
+/** @type {import('../object/index.js').IObject[]} */
+const objects = [];
 
 const clear = () => {
   container.removeChildren();
@@ -21,26 +25,24 @@ const clear = () => {
 /**
  * @param {{
  *  objects: {
- *    name: string;
- *    position?: { x?: number, y?: number, z?: number};
- *    clone?: string;
+ *    key: string;
+ *    position?: { x?: number, y?: number, z?: number };
  *  }[]
  * }} data
  */
 const load = async (data) => {
   clear();
-  const loaded = await Promise.all(data.objects.map(async (info) => {
-    const original = await resource.objects.find(info.name);
-    const object = await (info.clone ? (await original.load()).clone(info.clone) : original.load());
+  await Promise.all(data.objects.map(async (info) => {
+    const object_resrouce = resource.objects.find(info.key);
+    // const object = await (info.clone ? (await original.load()).clone(info.clone) : original.load());
+    const obj = (await object_resrouce.load()).stamp(info.key);
     if (info.position) {
-      object.xyz = info.position;
+      obj.xyz = info.position;
     }
-    return object;
-  }));
-
-  loaded.forEach((obj) => {
     container.addChild(obj.container);
-  });
+    objects.push(obj);
+    return obj;
+  }));
 
   sender.scene_loaded({
     scene: current,
@@ -51,7 +53,11 @@ const load = async (data) => {
  * @param {*} data
  */
 const move = (data) => {
-  const target = resource.objects.find(data.target);
+  const target = objects.find((sprite) => sprite.name === data.target);
+  if (!target) {
+    throw new Error(`Fail to move. No target. ${data.target}`);
+  }
+
   const direction = data.direction;
   if (direction) {
     target.direction = direction;
@@ -72,7 +78,11 @@ const talk = (data) => {
  */
 const focus = (data) => {
   return new Promise((resolve) => {
-    camera.point(data.target);
+    const target = objects.find((sprite) => sprite.name === data.target);
+    if (!target) {
+      throw new Error(`Fail to focus. No target. ${data.target}`);
+    }
+    camera.point(target.xy);
     // @ts-ignore
     resolve();
   });
@@ -88,7 +98,7 @@ const control = (data) => {
   }
   const { width, height } = app.screen;
   if (data.target) {
-    controller.target = resource.objects.find(data.target);
+    controller.target = objects.find((obj) => obj.name === data.target) ?? null;
   } else {
     controller.target = null;
   }

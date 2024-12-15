@@ -29,7 +29,7 @@ const getMessageStyle = (width) => new TextStyle({
 
 /**
  * @typedef {Object} MessageShowParams
- * @property {import('../object/index.js').default} speaker
+ * @property {import('../object/resource.js').default} speaker
  * @property {string} text
  * @property {string=} portrait
  */

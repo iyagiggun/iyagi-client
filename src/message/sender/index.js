@@ -13,7 +13,7 @@ const sender = {
     }));
   },
   /**
-   * @param {import('../../object/index.js').default} target
+   * @param {import('../../object/index.js').IObject} target
    */
   interact(target) {
     global.ws.send(JSON.stringify({

@@ -1,25 +1,17 @@
 
 /**
- * @typedef {import('../object/index.js').default} IObject;
+ * @typedef {import('../object/resource.js').default} IObject;
  */
 
 import global from '../global/index.js';
-import resource from '../resource/index.js';
 import scene from '../scene/index.js';
 
 export default {
   /**
-   * @param {string | import('../object/index.js').default} target
+   * @param {import('../coords/index.js').Position} position
    */
-  point(target) {
-    const object = (() => {
-      if (typeof target === 'string') {
-        return resource.objects.find(target);
-      }
-      return target;
-    })();
-
-    const { x, y } = object.xy;
+  point(position) {
+    const { x, y } = position;
     const { width, height } = global.app.screen;
 
     scene.container.x = Math.round(width / 2 - x);

@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../object/index.js').default} IObject;
+ * @typedef {import('../object/resource.js').default} IObject;
  */
 
 /** @type {{ [name: string]: IObject | undefined }} */
@@ -14,12 +14,12 @@ const resource = {
       return !!objectsMap[name];
     },
     /**
-     * @param {string} name
+     * @param {string} key
      */
-    find(name) {
-      const obj = objectsMap[name];
+    find(key) {
+      const obj = objectsMap[key];
       if (!obj) {
-        throw new Error(`Fail to get object. name: ${name}`);
+        throw new Error(`Fail to get object. key: ${key}`);
       }
       return obj;
     },
