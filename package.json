@@ -7,33 +7,27 @@
   "exports": {
     ".": {
       "import": "./src/index.js",
-      "require": "./src/index.js",
-      "types": "./types/index.d.ts"
+      "require": "./src/index.js"
     },
     "./object": {
       "import": "./src/object/index.js",
-      "require": "./src/object/index.js",
-      "types": "./types/object/index.d.ts"
+      "require": "./src/object/index.js"
     },
     "./camera": {
       "import": "./src/camera/index.js",
-      "require": "./src/camera/index.js",
-      "types": "./types/camera/index.d.ts"
+      "require": "./src/camera/index.js"
     },
     "./controller": {
       "import": "./src/controller/index.js",
-      "require": "./src/controller/index.js",
-      "types": "./types/controller/index.d.ts"
+      "require": "./src/controller/index.js"
     },
     "./resource": {
       "import": "./src/resource/index.js",
-      "require": "./src/resource/index.js",
-      "types": "./types/resource/index.d.ts"
+      "require": "./src/resource/index.js"
     },
     "./const": {
       "import": "./src/const/index.js",
-      "require": "./src/const/index.js",
-      "types": "./types/const/index.d.ts"
+      "require": "./src/const/index.js"
     }
   },
   "scripts": {
@@ -53,8 +47,7 @@
     "@eslint/js": "^9.4.0",
     "@types/lodash-es": "^4.17.12",
     "eslint": "^8.57.0",
-    "globals": "^15.4.0",
-    "typescript": "^5.4.5"
+    "globals": "^15.4.0"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
