@@ -1,10 +1,7 @@
-import { Container, Graphics, Sprite, TextStyle, Text } from 'pixi.js';
+import { Container, Graphics, Text, TextStyle } from 'pixi.js';
 import global from '../global/index.js';
 
 export const TRANSPARENT_1PX_IMG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH5QkWDxoxGJD3fwAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAALSURBVAjXY2AAAgAABQAB4iYFmwAAAABJRU5ErkJggg==';
-
-
-const container = new Container();
 
 const NAME_STYLE = new TextStyle({
   fontSize: 24,
@@ -12,6 +9,11 @@ const NAME_STYLE = new TextStyle({
   fontWeight: 'bold',
   fill: 0xffffff,
 });
+
+const container = new Container();
+const bg = new Graphics();
+const token = new Text({ text: '' });
+const name = new Text({ text: '', style: NAME_STYLE });
 
 /**
  * @param {number} width
@@ -44,32 +46,20 @@ const getMessageStyle = (width) => new TextStyle({
  * @param {MessageShowParams} p
  */
 const show = ({ speaker, text, portrait: pKey }) => {
+
   const application = global.app;
   const appWidth = application.screen.width;
   const appHeight = application.screen.height;
 
-
-  container.width = appWidth;
-  container.height = appHeight;
-
-  const bg = new Graphics();
+  bg.clear();
   bg.rect(0, 0, appWidth, appHeight / 2 - 48);
   bg.fill({ color: 0x000000, alpha: 0.7 });
   bg.x = 0;
   bg.y = appHeight - bg.height;
   container.addChild(bg);
 
-  const upper = Sprite.from(TRANSPARENT_1PX_IMG);
-  upper.width = appWidth;
-  upper.height = appHeight - bg.height;
-  upper.x = 0;
-  upper.y = 0;
-  upper.eventMode = 'static';
-
-  // const { photo } = speaker;
   const portrait = speaker.portrait.get(pKey);
-  const name = new Text({ text: speaker.name, style: NAME_STYLE });
-  const token = new Text({ text: '' });
+  name.text = speaker.name;
 
   if (portrait) {
     const photoSize = Math.min(144, Math.min(appWidth, appHeight) / 2);
@@ -104,6 +94,7 @@ const show = ({ speaker, text, portrait: pKey }) => {
 
   const heightThreshold = bg.height;
   const showPartedMessage = () => {
+    console.error('messenger start');
     while (messageEndIdx <= messageIdxLimit && !isMessageOverflowed) {
       messageEndIdx += 1;
       token.text = text.substring(messageStartIdx, messageEndIdx);
@@ -114,10 +105,15 @@ const show = ({ speaker, text, portrait: pKey }) => {
     }
     isMessageOverflowed = false;
     messageStartIdx = messageEndIdx;
+
+    console.error('messenger end');
   };
 
-  application.stage.addChild(upper);
+  console.error('add child');
+  console.error(container.destroyed, container.height, container.width);
   application.stage.addChild(container);
+
+  console.error('add child done');
 
   showPartedMessage();
 
@@ -126,8 +122,8 @@ const show = ({ speaker, text, portrait: pKey }) => {
     container.on('pointertap', (evt) => {
       evt.stopPropagation();
       if (messageEndIdx > messageIdxLimit) {
-        application.stage.removeChild(upper);
         application.stage.removeChild(container);
+        console.error('messenger removed');
         resolve(undefined);
       } else {
         showPartedMessage();

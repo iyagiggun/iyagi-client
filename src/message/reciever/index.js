@@ -1,7 +1,5 @@
-import { Rectangle } from 'pixi.js';
 import { IMT } from '../../const/index.js';
 import global from '../../global/index.js';
-import resource from '../../resource/index.js';
 
 /**
  * @typedef Message
