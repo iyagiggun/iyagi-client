@@ -94,7 +94,6 @@ const show = ({ speaker, text, portrait: pKey }) => {
 
   const heightThreshold = bg.height;
   const showPartedMessage = () => {
-    console.error('messenger start');
     while (messageEndIdx <= messageIdxLimit && !isMessageOverflowed) {
       messageEndIdx += 1;
       token.text = text.substring(messageStartIdx, messageEndIdx);
@@ -105,15 +104,9 @@ const show = ({ speaker, text, portrait: pKey }) => {
     }
     isMessageOverflowed = false;
     messageStartIdx = messageEndIdx;
-
-    console.error('messenger end');
   };
 
-  console.error('add child');
-  console.error(container.destroyed, container.height, container.width);
   application.stage.addChild(container);
-
-  console.error('add child done');
 
   showPartedMessage();
 
@@ -123,7 +116,6 @@ const show = ({ speaker, text, portrait: pKey }) => {
       evt.stopPropagation();
       if (messageEndIdx > messageIdxLimit) {
         application.stage.removeChild(container);
-        console.error('messenger removed');
         resolve(undefined);
       } else {
         showPartedMessage();
