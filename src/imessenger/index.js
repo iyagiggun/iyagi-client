@@ -32,7 +32,7 @@ const getMessageStyle = (width) => new TextStyle({
 /**
  * @typedef {Object} MessageShowParams
  * @property {import('../object/resource.js').default} speaker
- * @property {string} text
+ * @property {string | string[]} message
  * @property {string=} portrait
  */
 
@@ -45,7 +45,7 @@ const getMessageStyle = (width) => new TextStyle({
 /**
  * @param {MessageShowParams} p
  */
-const show = ({ speaker, text, portrait: pKey }) => {
+const show = ({ speaker, message, portrait: pKey }) => {
 
   const application = global.app;
   const appWidth = application.screen.width;
@@ -87,24 +87,32 @@ const show = ({ speaker, text, portrait: pKey }) => {
     container.addChild(token);
   }
 
-  const messageIdxLimit = text.length;
-  let messageStartIdx = 0;
-  let messageEndIdx = 0;
-  let isMessageOverflowed = false;
+  /** @type {string[]} */
+  const textList = [].concat(message);
+  let listIdx = 0;
+  let msgStartIdx = 0;
+  let msgEndIdx = 0;
+  let isMsgOverflowed = false;
 
-  const heightThreshold = bg.height;
   const showPartedMessage = () => {
-    while (messageEndIdx <= messageIdxLimit && !isMessageOverflowed) {
-      messageEndIdx += 1;
-      token.text = text.substring(messageStartIdx, messageEndIdx);
+    const msg = textList[listIdx];
+    while(msgEndIdx <= msg.length && !isMsgOverflowed) {
+      msgEndIdx += 1;
+      token.text = msg.substring(msgStartIdx, msgEndIdx);
       if (bg.height > heightThreshold) {
-        isMessageOverflowed = true;
-        messageEndIdx -= 1;
+        isMsgOverflowed = true;
+        msgEndIdx -= 1;
       }
     }
-    isMessageOverflowed = false;
-    messageStartIdx = messageEndIdx;
+    if (msgEndIdx - 1 === msg.length) {
+      listIdx += 1;
+      msgStartIdx = 0;
+      msgEndIdx = 0;
+      isMsgOverflowed = false;
+    }
   };
+
+  const heightThreshold = bg.height;
 
   application.stage.addChild(container);
 
@@ -114,7 +122,7 @@ const show = ({ speaker, text, portrait: pKey }) => {
     container.eventMode = 'static';
     container.on('pointertap', (evt) => {
       evt.stopPropagation();
-      if (messageEndIdx > messageIdxLimit) {
+      if (listIdx >= textList.length) {
         application.stage.removeChild(container);
         resolve(undefined);
       } else {

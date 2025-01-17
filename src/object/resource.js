@@ -91,10 +91,10 @@ class ObjectResource {
   }
 
   /**
-   * @param {string} text
+   * @param {string | string[]} message
    */
-  talk(text) {
-    return global.messenger.show({ speaker: this, text });
+  talk(message) {
+    return global.messenger.show({ speaker: this, message });
   }
 }
 

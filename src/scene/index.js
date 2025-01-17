@@ -70,7 +70,7 @@ const move = (data) => {
  */
 const talk = (data) => {
   const target = resource.objects.find(data.target);
-  return target.talk(data.text);
+  return target.talk(data.message);
 };
 
 /**
