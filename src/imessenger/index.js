@@ -116,19 +116,20 @@ const show = ({ speaker, message, portrait: pKey }) => {
 
   application.stage.addChild(container);
 
-  showPartedMessage();
-
   return new Promise((resolve) => {
     container.eventMode = 'static';
-    container.on('pointertap', (evt) => {
+    showPartedMessage();
+    const handler = (evt) => {
       evt.stopPropagation();
       if (listIdx >= textList.length) {
         application.stage.removeChild(container);
+        container.off('pointertap', handler);
         resolve(undefined);
       } else {
         showPartedMessage();
       }
-    });
+    };
+    container.on('pointertap', handler);
   });
 };
 
