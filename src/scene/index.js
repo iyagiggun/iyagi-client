@@ -5,6 +5,7 @@ import sender from '../message/sender/index.js';
 import resource from '../resource/index.js';
 import camera from '../camera/index.js';
 import global from '../global/index.js';
+import { ObjectResource } from '../object/index.js';
 
 /**
  * @typedef {import('../message/reciever/index.js').Message} Message
@@ -33,8 +34,10 @@ const clear = () => {
 const load = async (data) => {
   clear();
   await Promise.all(data.objects.map(async (info) => {
+    if (!resource.objects.contains(info.key)) {
+      resource.objects.add(new ObjectResource(info));
+    }
     const object_resrouce = resource.objects.find(info.key);
-    // const object = await (info.clone ? (await original.load()).clone(info.clone) : original.load());
     const obj = (await object_resrouce.load()).stamp(info.key);
     if (info.position) {
       obj.xyz = info.position;
