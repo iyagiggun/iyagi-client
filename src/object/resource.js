@@ -30,14 +30,14 @@ import ITexture from './texture.js';
  * @property {ActionArea} [down]
  * @property {ActionArea} [left]
  * @property {ActionArea} [right]
+ * @property {boolean=} playing
  */
 
 /**
  * @typedef SpriteInfo
  * @property {SpriteImage} [image]
  * @property {import('../coords/index.js').Position} [offset]
- * @property {Motion} base
- * @property {{[key: string]: Motion}} [actions]
+ * @property {{[key: string]: Motion}} [motions]
  */
 
 /**

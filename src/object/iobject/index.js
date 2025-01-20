@@ -80,6 +80,9 @@ export default class IObject {
     }
     this.container.addChild(next);
     this.#current = next;
+    if (this.#info.motions[motion].playing) {
+      this.play();
+    }
   }
 
   /**
@@ -234,7 +237,7 @@ export default class IObject {
   #getOffset() {
     const motion = this.#motion;
     const dir = this.#direction;
-    const sprite = motion === 'base' ? this.#info.base : this.#info.actions?.[motion];
+    const sprite = this.#info.motions?.[motion];
     if (!sprite) {
       throw new Error(`Fail to get offset. No the motion. ${motion}`);
     }

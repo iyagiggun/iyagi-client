@@ -71,10 +71,7 @@ export default class ITexture {
     }
 
     /** @type {{[key: string]: import('./resource.js').Motion}} */
-    const motions = {
-      base: this.#info.base,
-      ...(this.#info.actions ?? {}),
-    };
+    const motions = this.#info.motions;
 
     const promises = Object.keys(motions)
       .map(async (motion) => {
@@ -120,7 +117,7 @@ export default class ITexture {
 
     const as = new AnimatedSprite(data);
     as.animationSpeed = 1 * DEFAULT_ANIMATION_SPEED;
-    as.loop = this.#info.actions?.[motion]?.loop ?? true;
+    as.loop = this.#info.motions?.[motion]?.loop ?? true;
     return as;
   }
 }
