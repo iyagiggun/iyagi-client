@@ -98,32 +98,4 @@ class ObjectResource {
   }
 }
 
-export class ObjectResourceMono extends ObjectResource {
-  /**
-   * @param {{
-   *  key: string;
-   *  image: string,
-   *  offset?: import('../coords/index.js').Position;
-   *  frames: import('../coords/index.js').Area[];
-   * }} p
-   */
-  constructor(p) {
-    super({
-      key: p.key,
-      sprite: {
-        image: {
-          url: p.image,
-        },
-        offset: p.offset,
-        base: {
-          down: {
-            frames: p.frames,
-          },
-        },
-      },
-    });
-  }
-}
-
-
 export default ObjectResource;
