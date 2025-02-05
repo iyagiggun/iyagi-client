@@ -1,5 +1,4 @@
 import { IMT } from '../../const/index.js';
-import global from '../../global/index.js';
 
 /**
  * @typedef Message
@@ -7,7 +6,7 @@ import global from '../../global/index.js';
  * @property {*} data
  */
 
-/** @type {((msg: Message) => void)[]} */
+/** @type {((msg: Message) => Promise<void>)[]} */
 const recieve_list = [];
 
 /**
@@ -20,51 +19,39 @@ const add = (recieve) => {
   recieve_list.push(recieve);
 };
 
+const excute = async ({ type, data }) => {
+  const promises = recieve_list.map((recieve) => recieve({ type, data }));
+  await Promise.all(promises);
+};
+
+/**
+ * @param {Message} msg
+ * @return {Promise<void>}
+ */
+const default_recieve = (msg) => {
+  switch(msg.type) {
+    case IMT.LIST: {
+      /** @type {Message[]} */
+      const list = msg.data.list;
+      return list.reduce(
+        /**
+         * @param {Promise<void>} prev
+         * @param {Message} msg
+         */
+        (prev, msg) => prev.then(() => excute(msg)), Promise.resolve());
+    }
+  }
+};
+
+add(default_recieve);
+
 /**
  * @param {WebSocket} ws
  */
 const init = (ws) => {
-
-  const app = global.app;
-
   ws.addEventListener('message', (msg) => {
     const { type, data } = JSON.parse(msg.data);
-
-    switch (type) {
-
-      // case IMT.CONTROLLER_ENABLE: {
-      //   const controller = global.controller;
-      //   if (!controller) {
-      //     throw new Error('No controller.');
-      //   }
-      //   const { width, height } = app.screen;
-      //   if (data.target) {
-      //     controller.target = resource.objects.find(data.target);
-      //   } else {
-      //     controller.target = null;
-      //   }
-      //   const cc = controller.container;
-      //   cc.hitArea = new Rectangle(0, 0, width, height);
-      //   app.stage.addChild(cc);
-      //   break;
-      // }
-
-      case IMT.CONTROLLER_DISABLE: {
-        if (global.controller) {
-          app.stage.removeChild(global.controller.container);
-        }
-        break;
-      }
-
-      default:
-        recieve_list.forEach((recieve) => {
-          try {
-            recieve({ type, data });
-          } catch (e) {
-            throw new Error(`Fail to excute recieve. ${type}  ${data}`);
-          }
-        });
-    }
+    excute({ type, data });
   });
 };
 

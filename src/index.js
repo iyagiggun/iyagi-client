@@ -8,7 +8,7 @@ import scene from './scene/index.js';
 
 let inited = false;
 
-const iyagi = {
+const iclient = {
   /**
    * @param {{
    *  websocket: WebSocket;
@@ -63,4 +63,4 @@ const iyagi = {
   },
 };
 
-export default iyagi;
+export default iclient;
