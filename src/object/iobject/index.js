@@ -3,6 +3,7 @@ import { getMDKey } from '../texture.js';
 import { AnimatedSprite, Container } from 'pixi.js';
 import camera from '../../camera/index.js';
 import global from '../../global/index.js';
+import { DEFAULT_ANIMATION_SPEED } from '../../const/index.js';
 
 /**
  * @typedef {import('../../coords/index.js').Direction} Direction
@@ -155,13 +156,13 @@ export default class IObject {
   }
 
   /**
-   * @param {{
-   *  position: import('../../coords/index.js').Position;
+   * @param {import('../../coords/index.js').Position & {
    *  speed?: number;
    * }} p
    */
   move({
-    position,
+    x,
+    y,
     speed: _speed,
   }) {
     this.#complete();
@@ -174,14 +175,14 @@ export default class IObject {
       const tick = () => {
         const { x: curX, y: curY } = this.xy;
 
-        const diffX = position.x - curX;
-        const diffY = position.y - curY;
+        const diffX = x - curX;
+        const diffY = y - curY;
         const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
 
         const arrived = distance < speed;
 
         if (arrived) {
-          this.xy = position;
+          this.xy = { x, y };
         } else {
           const deltaX = speed * (diffX / distance);
           const deltaY = speed * (diffY / distance);
@@ -209,13 +210,28 @@ export default class IObject {
         resolve();
       };
 
+      this.stop();
+      this.play({
+        speed,
+      });
       global.app.ticker.add(tick);
     });
   }
 
-  play() {
+  /**
+   * @param {{
+   *   speed: number
+   * }} options
+   */
+  play({
+    speed,
+  } = {}) {
     if ((this.#current instanceof AnimatedSprite) === false) {
       return;
+    }
+    if (speed > 0) {
+      console.error('speed', speed);
+      this.#current.animationSpeed = speed * DEFAULT_ANIMATION_SPEED;
     }
     this.#current.play();
   }

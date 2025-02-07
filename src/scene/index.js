@@ -60,12 +60,11 @@ const move = (data) => {
   if (!target) {
     throw new Error(`Fail to move. No target. ${data.target}`);
   }
-
   const direction = data.direction;
   if (direction) {
     target.direction = direction;
   }
-  return target.move({ position: data.position });
+  return target.move(data);
 };
 
 /**
@@ -79,16 +78,25 @@ const talk = (data) => {
 /**
  * @param {*} data
  */
-const focus = (data) => {
-  return new Promise((resolve) => {
-    const target = objects.find((sprite) => sprite.name === data.target);
-    if (!target) {
-      throw new Error(`Fail to focus. No target. ${data.target}`);
+const focus = async (data) => {
+  const position = (() => {
+    if (typeof data.target === 'string') {
+      const target = objects.find((obj) => obj.name === data.target);
+      if (!target) {
+        throw new Error(`Fail to focus. No target. ${data.target}`);
+      }
+      return target.xy;
     }
-    camera.point(target.xy);
-    // @ts-ignore
-    resolve();
-  });
+    if (typeof data.target === 'object' && typeof data.target.x === 'number' && typeof data.target.y === 'number') {
+      return data.target;
+    }
+    throw new Error('Fail to focus in the scene');
+  })();
+  if (data.options?.speed > 0) {
+    await camera.move(position, data.options.speed);
+  } else {
+    camera.point(position);
+  }
 };
 
 /**
@@ -140,27 +148,6 @@ const recieve = (msg) => {
 
     case IMT.SCENE_CONTROL:
       return control(msg.data);
-
-    case IMT.SCENE_TAKE: {
-      const key = msg.data.key;
-      if (!key) {
-        throw new Error('Invalid "SCENE.TAKE" message. No key.');
-      }
-      /** @type {Message[]} */
-      const list = msg.data.list;
-      return list.reduce(
-        /**
-         * @param {Promise<void>} prev
-         * @param {Message} msg
-         */
-        (prev, msg) => prev.then(() => recieve(msg)), Promise.resolve())
-        .then(() => {
-          sender.scene_taken({
-            scene: current,
-            key,
-          });
-        });
-    }
     default:
       return Promise.resolve();
   }

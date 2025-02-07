@@ -1,13 +1,11 @@
 import { AnimatedSprite, Assets, Sprite, Spritesheet, Texture } from 'pixi.js';
-import { FRAMES_PER_SECOND } from '../const/index.js';
+import { DEFAULT_ANIMATION_SPEED } from '../const/index.js';
 
 /**
  * @typedef {import('../coords/index.js').Area} Area
  * @typedef {import('../coords/index.js').Direction} Direction
  * @typedef {import('../coords/index.js').Position} Position
  */
-
-const DEFAULT_ANIMATION_SPEED = 6 / FRAMES_PER_SECOND; // 10 fps
 
 /**
  * @param {string} motion

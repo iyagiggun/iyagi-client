@@ -40,6 +40,11 @@ const default_recieve = (msg) => {
          */
         (prev, msg) => prev.then(() => excute(msg)), Promise.resolve());
     }
+    case IMT.WAIT: {
+      return new Promise((resolve) => {
+        window.setTimeout(() => resolve(), msg.data.delay);
+      });
+    }
   }
 };
 
