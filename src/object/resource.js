@@ -61,7 +61,6 @@ class ObjectResource {
     this.#params = params;
     this.#key = params.key;
     this.#texture = new ITexture(params.sprite);
-
     this.portrait = new Portrait(params.portraits);
   }
 

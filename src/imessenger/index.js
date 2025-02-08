@@ -124,6 +124,7 @@ const show = ({ speaker, message, portrait: pKey }) => {
       if (listIdx >= textList.length) {
         application.stage.removeChild(container);
         container.off('pointertap', handler);
+        container.removeChild(portrait);
         resolve(undefined);
       } else {
         showPartedMessage();
