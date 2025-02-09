@@ -40,11 +40,7 @@ const control = (data) => {
     throw new Error('No controller.');
   }
   const { width, height } = app.screen;
-  if (data.target) {
-    controller.target = objects.find((obj) => obj.name === data.target) ?? null;
-  } else {
-    controller.target = null;
-  }
+  controller.target = find(data.stamped);
   const cc = controller.container;
   cc.hitArea = new Rectangle(0, 0, width, height);
   app.stage.addChild(cc);
