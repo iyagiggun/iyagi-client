@@ -4,7 +4,7 @@ import scene from '../scene/index.js';
 import { FRAMES_PER_SECOND } from '../const/index.js';
 
 /**
- * @param {import('../coords/index.js').Position} position
+ * @param {import('../coords/index.js').XY} xy
  */
 const getContainerPos = ({ x, y }) => {
   const { width, height } = global.app.screen;
@@ -16,21 +16,20 @@ const getContainerPos = ({ x, y }) => {
 
 export default {
   /**
-   * @param {import('../coords/index.js').Position} position
+   * @param {import('../coords/index.js').XY} xy
    */
-  point(position) {
-    const { x: destX, y: destY } = getContainerPos(position);
+  point(xy) {
+    const { x: destX, y: destY } = getContainerPos(xy);
     scene.container.x = destX;
     scene.container.y = destY;
   },
   /**
-   * @param {import('../coords/index.js').Position} position
-   * @param {1 | 2 | 3} _speed
+   * @param {XY & { speed: 1 | 2 | 3 }} info
    */
-  move(position, _speed) {
+  move(info) {
     const container = scene.container;
-    const speed = _speed * 100 / FRAMES_PER_SECOND;
-    const { x: destX, y: destY } = getContainerPos(position);
+    const speed = info.speed * 300 / FRAMES_PER_SECOND;
+    const { x: destX, y: destY } = getContainerPos(info);
     const ticker = global.app.ticker;
     return new Promise((resolve, reject) => {
       const tick = () => {
@@ -57,7 +56,13 @@ export default {
         }
       };
       ticker.add(tick);
-
     });
+  },
+  /**
+   * @param {XY} xy
+   */
+  adjust({ x: deltaX, y: deltaY }) {
+    scene.container.x -= deltaX;
+    scene.container.y -= deltaY;
   },
 };

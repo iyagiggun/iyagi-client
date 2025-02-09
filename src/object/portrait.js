@@ -50,3 +50,7 @@ export class Portrait {
     return sprite;
   }
 }
+
+/**
+ * @typedef {Portrait} PortraitType
+ */

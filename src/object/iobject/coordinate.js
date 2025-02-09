@@ -15,7 +15,7 @@ export default class Coordinate {
 
   /**
    * @param {{ x?: number, y?: number, z?: number }} p
-   * @param {import('../texture.js').Position} [offset]
+   * @param {import('../../coords').XY} [offset]
    */
   set({ x, y, z }, offset) {
     // TODO : mod

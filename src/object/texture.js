@@ -4,7 +4,6 @@ import { DEFAULT_ANIMATION_SPEED } from '../const/index.js';
 /**
  * @typedef {import('../coords/index.js').Area} Area
  * @typedef {import('../coords/index.js').Direction} Direction
- * @typedef {import('../coords/index.js').Position} Position
  */
 
 /**

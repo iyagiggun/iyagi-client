@@ -1,6 +1,5 @@
-import global from '../global/index.js';
-import { Portrait } from './portrait.js';
 import IObject from './iobject/index.js';
+import { Portrait } from './portrait.js';
 import ITexture from './texture.js';
 
 /**
@@ -17,14 +16,14 @@ import ITexture from './texture.js';
 /**
  * @typedef ActionArea
  * @property {SpriteImage} [image]
- * @property {import('../coords/index.js').Position} [offset]
+ * @property {import('../coords/index.js').XY} [offset]
  * @property {Area[]} frames
  */
 
 /**
  * @typedef Motion
  * @property {SpriteImage} [image]
- * @property {import('../coords/index.js').Position} [offset]
+ * @property {import('../coords/index.js').XY} [offset]
  * @property {boolean} [loop]
  * @property {ActionArea} [up]
  * @property {ActionArea} [down]
@@ -36,7 +35,7 @@ import ITexture from './texture.js';
 /**
  * @typedef SpriteInfo
  * @property {SpriteImage} [image]
- * @property {import('../coords/index.js').Position} [offset]
+ * @property {import('../coords/index.js').XY} [offset]
  * @property {{[key: string]: Motion}} [motions]
  */
 
@@ -52,6 +51,8 @@ class ObjectResource {
 
   #texture;
 
+  #portrait;
+
   #key;
 
   /**
@@ -61,11 +62,11 @@ class ObjectResource {
     this.#params = params;
     this.#key = params.key;
     this.#texture = new ITexture(params.sprite);
-    this.portrait = new Portrait(params.portraits);
+    this.#portrait = new Portrait(params.portraits);
   }
 
   async load() {
-    await Promise.all([this.#texture.load(), this.portrait.load()]);
+    await Promise.all([this.#texture.load(), this.#portrait.load()]);
     return this;
   }
 
@@ -78,6 +79,7 @@ class ObjectResource {
       name,
       texture: this.#texture,
       info: this.#params.sprite,
+      portrait: this.#portrait,
     });
   }
 
@@ -87,13 +89,6 @@ class ObjectResource {
 
   get name() {
     return this.#key;
-  }
-
-  /**
-   * @param {string | string[]} message
-   */
-  talk(message) {
-    return global.messenger.show({ speaker: this, message });
   }
 }
 

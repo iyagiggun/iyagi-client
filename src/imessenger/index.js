@@ -31,9 +31,9 @@ const getMessageStyle = (width) => new TextStyle({
 
 /**
  * @typedef {Object} MessageShowParams
- * @property {import('../object/resource.js').default} speaker
+ * @property {string} name
  * @property {string | string[]} message
- * @property {string=} portrait
+ * @property {import('pixi.js').Sprite} [portrait]
  */
 
 /**
@@ -45,7 +45,7 @@ const getMessageStyle = (width) => new TextStyle({
 /**
  * @param {MessageShowParams} p
  */
-const show = ({ speaker, message, portrait: pKey }) => {
+const show = ({ name: _name, message, portrait }) => {
 
   const application = global.app;
   const appWidth = application.screen.width;
@@ -58,8 +58,7 @@ const show = ({ speaker, message, portrait: pKey }) => {
   bg.y = appHeight - bg.height;
   container.addChild(bg);
 
-  const portrait = speaker.portrait.get(pKey);
-  name.text = speaker.name;
+  name.text = _name;
 
   if (portrait) {
     const photoSize = Math.min(144, Math.min(appWidth, appHeight) / 2);

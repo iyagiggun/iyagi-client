@@ -25,6 +25,8 @@ export default class IObject {
 
   #texture;
 
+  #portrait;
+
   /** @type {Sprite | null} */
   #current = null;
 
@@ -40,10 +42,12 @@ export default class IObject {
    * @param {string=} param.name
    * @param {import('../texture.js').default} param.texture
    * @param {import('../resource.js').SpriteInfo} param.info
+   * @param {import('../portrait.js').PortraitType} param.portrait
    */
   constructor({
     name,
     texture,
+    portrait,
     info,
   }) {
     this.container = new Container();
@@ -51,6 +55,7 @@ export default class IObject {
     this.#texture = texture;
     this.#direction = 'down';
     this.#coordinate = new Coordinate(this.container);
+    this.#portrait = portrait;
     this.#info = info;
     this.#set(this.#motion, this.#direction);
   }
@@ -156,7 +161,7 @@ export default class IObject {
   }
 
   /**
-   * @param {import('../../coords/index.js').Position & {
+   * @param {import('../../coords/index.js').XY & {
    *  speed?: number;
    * }} p
    */
@@ -187,7 +192,7 @@ export default class IObject {
           const deltaX = speed * (diffX / distance);
           const deltaY = speed * (diffY / distance);
           this.xy = { x: curX + deltaX, y: curY + deltaY };
-          camera.point(this.xy);
+          camera.adjust({ x: deltaX, y: deltaY });
           // if (camera) {
           //   camera.point(name);
           // }
@@ -219,6 +224,14 @@ export default class IObject {
   }
 
   /**
+   * @param {string | string[]} message
+   * @param {string} [key]
+   */
+  talk(message, key) {
+    return global.messenger.show({ name: this.name, message, portrait: this.#portrait.get(key) });
+  }
+
+  /**
    * @param {{
    *   speed: number
    * }} options
@@ -230,7 +243,6 @@ export default class IObject {
       return;
     }
     if (speed > 0) {
-      console.error('speed', speed);
       this.#current.animationSpeed = speed * DEFAULT_ANIMATION_SPEED;
     }
     this.#current.play();

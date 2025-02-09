@@ -2,10 +2,6 @@ import { throttle } from 'lodash-es';
 
 const GESTURE_THRESHOLD = 30;
 
-/**
- * @typedef {import('../coords/index.js').Position} Position
- */
-
 export default class Gesture {
 
   #container;
@@ -18,7 +14,7 @@ export default class Gesture {
   #gestureList = [];
 
   /**
-   * @type {Position | null}
+   * @type {XY | null}
    */
   #last = null;
 
@@ -50,7 +46,7 @@ export default class Gesture {
   }
 
   /**
- * @param {import('../coords/index.js').Position} cur
+ * @param {XY} cur
  */
   #check(cur) {
     if (!this.#last) {

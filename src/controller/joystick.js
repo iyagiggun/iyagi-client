@@ -2,7 +2,7 @@
 /**
  * @typedef {{
  *  container: import('pixi.js').Container;
- *  start: import('../coords/index.js').Position;
+ *  start: import('../coords/index.js').XY;
  *  pointerId: number;
  * }} JoystickInfo
  */
@@ -84,7 +84,7 @@ export default class Joystick {
   /**
    * @param {{
    *  pointerId: number;
-   *  start: import('../coords/index.js').Position;
+   *  start: import('../coords/index.js').XY;
    * }} p
    */
   activate({
