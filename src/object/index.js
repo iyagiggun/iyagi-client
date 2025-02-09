@@ -10,10 +10,10 @@ import { Rectangle } from 'pixi.js';
 export const objects = [];
 
 /**
- * @param {string} key
+ * @param {string} stamped
  */
-const find = (key) => {
-  const obj = objects.find((obj) => obj.name === key);
+const find = (stamped) => {
+  const obj = objects.find((obj) => obj.stamped === stamped);
   if (!obj) {
     throw new Error('Fail to find object.');
   }
@@ -21,7 +21,7 @@ const find = (key) => {
 };
 
 const move = (data) => {
-  const target = find(data.target);
+  const target = find(data.stamped);
   const direction = data.direction;
   if (direction) {
     target.direction = direction;
@@ -30,7 +30,7 @@ const move = (data) => {
 };
 
 const talk = (data) => {
-  const target = find(data.target);
+  const target = find(data.stamped);
   return target.talk(data.message);
 };
 
@@ -52,6 +52,19 @@ const control = (data) => {
   return Promise.resolve();
 };
 
+
+const remove = (data) => {
+  const idx = objects.findIndex((obj) => obj.stamped === data.stamped);
+  if (idx >= 0) {
+    objects.splice(idx, 1).forEach((removed) => {
+      const parent = removed.container.parent;
+      if (parent){
+        parent.removeChild(removed.container);
+      }
+    });
+  }
+  return Promise.resolve();
+};
 /**
  * @param {Message} msg
  * @return {Promise<void>}
@@ -64,6 +77,8 @@ export const recieve_object_event = (msg) => {
       return talk(msg.data);
     case IMT.OBJECT_CONTROL:
       return control(msg.data);
+    case IMT.OBJECT_REMOVE:
+      return remove(msg.data);
     default:
       return Promise.resolve();
   }

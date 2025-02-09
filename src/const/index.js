@@ -8,6 +8,7 @@ export const IMT = {
   OBJECT_MOVE: 'object.move',
   OBJECT_TALK: 'object.talk',
   OBJECT_CONTROL: 'object.control',
+  OBJECT_REMOVE: 'object.remove',
   SCENE_LOAD: 'scene.load',
   SCENE_LOADED: 'scene.loaded',
   SCENE_OBJECT: 'scene.object',

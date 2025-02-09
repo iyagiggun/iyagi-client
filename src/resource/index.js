@@ -2,6 +2,7 @@
  * @typedef {import('../object/resource.js').default} IObject;
  */
 
+
 /** @type {{ [name: string]: IObject | undefined }} */
 const objectsMap = {};
 
@@ -24,13 +25,13 @@ const resource = {
       return obj;
     },
     /**
-     * @param {IObject} obj
+     * @param {import('../object/resource.js').ObjectResourceType} resource
      */
-    add(obj) {
-      if (objectsMap[obj.name]) {
-        throw new Error(`Fail to add resource. Duplicated name(${obj.name}).`);
+    add(resource) {
+      if (objectsMap[resource.key]) {
+        throw new Error(`Fail to add resource. Duplicated name(${resource.key}).`);
       }
-      objectsMap[obj.name] = obj;
+      objectsMap[resource.key] = resource;
     },
     /**
      * @param {IObject[]} list

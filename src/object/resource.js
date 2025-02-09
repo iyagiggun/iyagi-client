@@ -42,6 +42,7 @@ import ITexture from './texture.js';
 /**
  * @typedef IObjectParams
  * @property {string} key
+ * @property {string} [name]
  * @property {SpriteInfo} sprite
  * @property {import('./portrait.js').PortraitParams=} portraits
  */
@@ -56,11 +57,12 @@ class ObjectResource {
   #key;
 
   /**
+   * @param {string} key
    * @param {IObjectParams} params
    */
-  constructor(params) {
+  constructor(key, params) {
     this.#params = params;
-    this.#key = params.key;
+    this.#key = key;
     this.#texture = new ITexture(params.sprite);
     this.#portrait = new Portrait(params.portraits);
   }
@@ -71,25 +73,30 @@ class ObjectResource {
   }
 
   /**
-   * @param {string=} name
+   * @param {string=} stamped
    * @returns
    */
-  stamp(name) {
+  stamp(stamped) {
     return new IObject({
-      name,
+      stamped,
+      name: this.#params.name,
       texture: this.#texture,
       info: this.#params.sprite,
       portrait: this.#portrait,
     });
   }
 
-  set name(_) {
-    throw new Error('The name cannot be edited');
+  set key(_) {
+    throw new Error('The key cannot be edited');
   }
 
-  get name() {
+  get key() {
     return this.#key;
   }
 }
+
+/**
+ * @typedef {ObjectResource} ObjectResourceType
+ */
 
 export default ObjectResource;

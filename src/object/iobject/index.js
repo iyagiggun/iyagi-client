@@ -39,18 +39,21 @@ export default class IObject {
 
   /**
    * @param {Object} param
+   * @param {string} param.stamped
    * @param {string=} param.name
    * @param {import('../texture.js').default} param.texture
    * @param {import('../resource.js').SpriteInfo} param.info
    * @param {import('../portrait.js').PortraitType} param.portrait
    */
   constructor({
+    stamped,
     name,
     texture,
     portrait,
     info,
   }) {
     this.container = new Container();
+    this.stamped = stamped;
     this.name = name;
     this.#texture = texture;
     this.#direction = 'down';

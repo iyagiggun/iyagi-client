@@ -30,11 +30,11 @@ const clear = () => {
 const load = async (data) => {
   clear();
   await Promise.all(data.objects.map(async (info) => {
-    if (!resource.objects.contains(info.key)) {
-      resource.objects.add(new ObjectResource(info));
+    if (!resource.objects.contains(info.resource)) {
+      resource.objects.add(new ObjectResource(info.resource, info));
     }
-    const object_resrouce = resource.objects.find(info.key);
-    const obj = (await object_resrouce.load()).stamp(info.key);
+    const object_resource = resource.objects.find(info.resource);
+    const obj = (await object_resource.load()).stamp(info.stamped);
     obj.xyz = info;
     container.addChild(obj.container);
     objects.push(obj);
