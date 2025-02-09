@@ -45,8 +45,8 @@ export default {
           ticker.remove(tick);
           resolve();
         } else {
-          const deltaX = speed * (diffX / distance);
-          const deltaY = speed * (diffY / distance);
+          const deltaX = Math.round(speed * (diffX / distance));
+          const deltaY = Math.round(speed * (diffY / distance));
           container.x += deltaX;
           container.y += deltaY;
           if (Number.isNaN(deltaX) || Number.isNaN(deltaY)) {
