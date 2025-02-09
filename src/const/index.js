@@ -4,8 +4,10 @@ export const DEFAULT_ANIMATION_SPEED = 6 / FRAMES_PER_SECOND; // 10 fps
 export const IMT = {
   WAIT: 'wait',
   LIST: 'list',
+
   OBJECT_MOVE: 'object.move',
   OBJECT_TALK: 'object.talk',
+  OBJECT_CONTROL: 'object.control',
   SCENE_LOAD: 'scene.load',
   SCENE_LOADED: 'scene.loaded',
   SCENE_OBJECT: 'scene.object',

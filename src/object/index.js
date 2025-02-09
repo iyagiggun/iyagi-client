@@ -1,6 +1,8 @@
 import ObjectResource from './resource.js';
 import IObject from './iobject/index.js';
 import { IMT } from '../const/index.js';
+import global from '../global/index.js';
+import { Rectangle } from 'pixi.js';
 
 /**
  * @type {IObject[]}
@@ -32,6 +34,24 @@ const talk = (data) => {
   return target.talk(data.message);
 };
 
+const control = (data) => {
+  const { controller, app } = global;
+  if (!controller) {
+    throw new Error('No controller.');
+  }
+  const { width, height } = app.screen;
+  if (data.target) {
+    controller.target = objects.find((obj) => obj.name === data.target) ?? null;
+  } else {
+    controller.target = null;
+  }
+  const cc = controller.container;
+  cc.hitArea = new Rectangle(0, 0, width, height);
+  app.stage.addChild(cc);
+
+  return Promise.resolve();
+};
+
 /**
  * @param {Message} msg
  * @return {Promise<void>}
@@ -42,6 +62,8 @@ export const recieve_object_event = (msg) => {
       return move(msg.data);
     case IMT.OBJECT_TALK:
       return talk(msg.data);
+    case IMT.OBJECT_CONTROL:
+      return control(msg.data);
     default:
       return Promise.resolve();
   }

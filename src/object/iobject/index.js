@@ -189,8 +189,8 @@ export default class IObject {
         if (arrived) {
           this.xy = { x, y };
         } else {
-          const deltaX = speed * (diffX / distance);
-          const deltaY = speed * (diffY / distance);
+          const deltaX = Math.round(speed * (diffX / distance));
+          const deltaY = Math.round(speed * (diffY / distance));
           this.xy = { x: curX + deltaX, y: curY + deltaY };
           camera.adjust({ x: deltaX, y: deltaY });
           // if (camera) {
