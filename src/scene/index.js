@@ -34,7 +34,7 @@ const load = async (data) => {
       resource.objects.add(new ObjectResource(info.resource, info));
     }
     const object_resource = resource.objects.find(info.resource);
-    const obj = (await object_resource.load()).stamp(info.stamped);
+    const obj = (await object_resource.load()).stamp(info.serial);
     obj.xyz = info;
     container.addChild(obj.container);
     objects.push(obj);

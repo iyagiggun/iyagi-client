@@ -73,12 +73,12 @@ class ObjectResource {
   }
 
   /**
-   * @param {string=} stamped
+   * @param {string=} serial
    * @returns
    */
-  stamp(stamped) {
+  stamp(serial) {
     return new IObject({
-      stamped,
+      serial,
       name: this.#params.name,
       texture: this.#texture,
       info: this.#params.sprite,

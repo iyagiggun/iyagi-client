@@ -10,10 +10,10 @@ import { Rectangle } from 'pixi.js';
 export const objects = [];
 
 /**
- * @param {string} stamped
+ * @param {string} serial
  */
-const find = (stamped) => {
-  const obj = objects.find((obj) => obj.stamped === stamped);
+const find = (serial) => {
+  const obj = objects.find((obj) => obj.serial === serial);
   if (!obj) {
     throw new Error('Fail to find object.');
   }
@@ -21,7 +21,7 @@ const find = (stamped) => {
 };
 
 const move = (data) => {
-  const target = find(data.stamped);
+  const target = find(data.target);
   const direction = data.direction;
   if (direction) {
     target.direction = direction;
@@ -30,7 +30,7 @@ const move = (data) => {
 };
 
 const talk = (data) => {
-  const target = find(data.stamped);
+  const target = find(data.target);
   return target.talk(data.message);
 };
 
@@ -40,7 +40,7 @@ const control = (data) => {
     throw new Error('No controller.');
   }
   const { width, height } = app.screen;
-  controller.target = find(data.stamped);
+  controller.target = find(data.target);
   const cc = controller.container;
   cc.hitArea = new Rectangle(0, 0, width, height);
   app.stage.addChild(cc);
@@ -50,7 +50,7 @@ const control = (data) => {
 
 
 const remove = (data) => {
-  const idx = objects.findIndex((obj) => obj.stamped === data.stamped);
+  const idx = objects.findIndex((obj) => obj.serial === data.target);
   if (idx >= 0) {
     objects.splice(idx, 1).forEach((removed) => {
       const parent = removed.container.parent;
