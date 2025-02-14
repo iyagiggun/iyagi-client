@@ -20,7 +20,7 @@ const sender = {
       key: global.key,
       type: IMT.SCENE_INTERACT,
       data: {
-        target: target.name,
+        target: target.serial,
       },
     }));
   },
