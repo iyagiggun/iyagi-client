@@ -33,9 +33,11 @@ const load = async (data) => {
     if (!resource.objects.contains(info.resource)) {
       resource.objects.add(new ObjectResource(info.resource, info));
     }
+
     const object_resource = resource.objects.find(info.resource);
     const obj = (await object_resource.load()).stamp(info.serial);
     obj.xyz = info;
+    obj.direction = info.direction;
     container.addChild(obj.container);
     objects.push(obj);
     return obj;

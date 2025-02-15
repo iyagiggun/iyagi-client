@@ -6,7 +6,6 @@ import global from '../../global/index.js';
 import { DEFAULT_ANIMATION_SPEED } from '../../const/index.js';
 
 /**
- * @typedef {import('../../coords/index.js').Direction} Direction
  * @typedef {import('pixi.js').Sprite} Sprite
  */
 
@@ -60,14 +59,15 @@ export default class IObject {
     this.#coordinate = new Coordinate(this.container);
     this.#portrait = portrait;
     this.#info = info;
-    this.#set(this.#motion, this.#direction);
+    this.set(this.#motion, this.#direction);
   }
 
   /**
    * @param {string} motion
-   * @param {Direction} direction
+   * @param {Direction?} _direction
    */
-  #set(motion, direction) {
+  set(motion, _direction) {
+    const direction = _direction ?? this.#direction;
     const mdKey = getMDKey(motion, direction);
     const next = this.#cache.get(mdKey) ?? this.#texture.createSprite(motion, direction);
     if (!this.#cache.has(mdKey)) {
@@ -156,7 +156,7 @@ export default class IObject {
           return;
         }
         this.#direction = dir;
-        this.#set(this.#motion, this.#direction);
+        this.set(this.#motion, this.#direction);
         break;
       default:
         throw new Error(`Fail to change direction. Invalid value. value: ${dir}`);

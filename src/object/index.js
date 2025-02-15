@@ -61,6 +61,13 @@ const remove = (data) => {
   }
   return Promise.resolve();
 };
+
+const motion = (data) => {
+  const target = find(data.target);
+  target.set(data.motion);
+  return Promise.resolve();
+};
+
 /**
  * @param {Message} msg
  * @return {Promise<void>}
@@ -75,6 +82,8 @@ export const recieve_object_event = (msg) => {
       return control(msg.data);
     case IMT.OBJECT_REMOVE:
       return remove(msg.data);
+    case IMT.OBJECT_MOTION:
+      return motion(msg.data);
     default:
       return Promise.resolve();
   }
