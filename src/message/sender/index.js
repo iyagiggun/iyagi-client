@@ -18,7 +18,7 @@ const sender = {
   interact(target) {
     global.ws.send(JSON.stringify({
       key: global.key,
-      type: IMT.SCENE_INTERACT,
+      type: IMT.OBJECT_INTERACT,
       data: {
         target: target.serial,
       },

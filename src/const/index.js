@@ -10,6 +10,7 @@ export const IMT = {
   OBJECT_CONTROL: 'object.control',
   OBJECT_REMOVE: 'object.remove',
   OBJECT_MOTION: 'object.motion',
+  OBJECT_INTERACT: 'object.interact',
 
 
   SCENE_LOAD: 'scene.load',
@@ -17,7 +18,6 @@ export const IMT = {
   SCENE_OBJECT: 'scene.object',
   SCENE_FOCUS: 'scene.focus',
   SCENE_CONTROL: 'scene.control',
-  SCENE_INTERACT: 'scene.interact',
 
   CONTROLLER_ENABLE: 'controller.enable',
   CONTROLLER_DISABLE: 'controller.disable',
