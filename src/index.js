@@ -13,7 +13,6 @@ const iclient = {
    * @param {{
    *  websocket: WebSocket;
    *  controller?: Controller;
-   *  entry: string;
    *  key: string;
    * }} p
    */
@@ -36,7 +35,7 @@ const iclient = {
     //   container.hitArea = new PIXI.Rectangle(0, 0, app.screen.width, app.screen.height);
     // });
     app.stage.addChild(scene.container);
-    scene.init(p.entry);
+    scene.init();
     scene.play();
     inited = true;
   },

@@ -24,23 +24,19 @@ const sender = {
       },
     }));
   },
-  /**
-   * @param {*} data
-   */
-  scene_load(data) {
+  shard_load() {
     global.ws.send(JSON.stringify({
       key: global.key,
-      type: IMT.SCENE_LOAD,
-      data,
+      type: IMT.SHARD_LOAD,
     }));
   },
   /**
    * @param {*} data
    */
-  scene_loaded(data) {
+  shard_loaded(data) {
     global.ws.send(JSON.stringify({
       key: global.key,
-      type: IMT.SCENE_LOADED,
+      type: IMT.SHARD_LOADED,
       data,
     }));
   },

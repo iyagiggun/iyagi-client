@@ -13,23 +13,22 @@ import { recieve_object_event, objects, ObjectResource } from '../object/index.j
 
 const container = new Container();
 
-/** @type { string | undefined } */
-let current;
-
 const clear = () => {
   container.removeChildren();
 };
 
 /**
  * @param {{
- *  objects: {
- *    key: string;
- *  }[]
+ *  shard: {
+ *    objects: {
+ *      key: string;
+ *    }[]
+ *  }
  * }} data
  */
 const load = async (data) => {
   clear();
-  await Promise.all(data.objects.map(async (info) => {
+  await Promise.all(data.shard.objects.map(async (info) => {
     if (!resource.objects.contains(info.resource)) {
       resource.objects.add(new ObjectResource(info.resource, info));
     }
@@ -43,9 +42,7 @@ const load = async (data) => {
     return obj;
   }));
 
-  sender.scene_loaded({
-    scene: current,
-  });
+  sender.shard_loaded();
 };
 
 const focus = async (data) => {
@@ -83,9 +80,7 @@ const object = (data) => {
 };
 
 const play = () => {
-  sender.scene_load({
-    scene: current,
-  });
+  sender.shard_load();
 };
 
 /**
@@ -95,10 +90,10 @@ const play = () => {
 const recieve = (msg) => {
   switch(msg.type) {
 
-    case IMT.SCENE_LOAD:
+    case IMT.SHARD_LOAD:
       return load(msg.data);
 
-    case IMT.SCENE_FOCUS:
+    case IMT.CAMERA_FOCUS:
       return focus(msg.data);
 
     case IMT.SCENE_OBJECT:
@@ -111,11 +106,7 @@ const recieve = (msg) => {
   }
 };
 
-/**
- * @param {string} entry
- */
-const init = (entry) => {
-  current = entry;
+const init = () => {
   reciever.add(recieve);
   reciever.add(recieve_object_event);
 };

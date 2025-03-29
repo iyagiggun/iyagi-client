@@ -5,6 +5,9 @@ export const IMT = {
   WAIT: 'wait',
   LIST: 'list',
 
+  SHARD_LOAD: 'shard.load',
+  SHARD_LOADED: 'shard.loaded',
+
   OBJECT_MOVE: 'object.move',
   OBJECT_TALK: 'object.talk',
   OBJECT_CONTROL: 'object.control',
@@ -21,4 +24,6 @@ export const IMT = {
 
   CONTROLLER_ENABLE: 'controller.enable',
   CONTROLLER_DISABLE: 'controller.disable',
+
+  CAMERA_FOCUS: 'camera.focus',
 };
