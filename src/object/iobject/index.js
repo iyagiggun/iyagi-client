@@ -54,6 +54,7 @@ export default class IObject {
     this.container = new Container();
     this.serial = serial;
     this.name = name;
+    this.offset = { x: 0, y: 0 };
     this.#texture = texture;
     this.#direction = 'down';
     this.#coordinate = new Coordinate(this.container);
@@ -98,21 +99,21 @@ export default class IObject {
    * @param {number} x
    */
   set x(x) {
-    this.#coordinate.set({ x }, this.#getOffset());
+    this.#coordinate.set({ x }, this.offset);
   }
 
   /**
    * @param {number} y
    */
   set y(y) {
-    this.#coordinate.set({ y }, this.#getOffset());
+    this.#coordinate.set({ y }, this.offset);
   }
 
   /**
    * @param {{x? : number, y?: number}} xy
    */
   set xy(xy) {
-    this.#coordinate.set(xy, this.#getOffset());
+    this.#coordinate.set(xy, this.offset);
   }
 
   /**
@@ -127,14 +128,14 @@ export default class IObject {
    * @param {{x?: number, y?: number, z?: number}} xyz
    */
   set xyz(xyz) {
-    this.#coordinate.set(xyz, this.#getOffset());
+    this.#coordinate.set(xyz, this.offset);
   }
 
   /**
    * @return {{ x: number, y: number, z: number }}
    */
   get xyz() {
-    const offset = this.#getOffset();
+    const offset = this.offset;
     const { x, y, z } = this.#coordinate.get();
     return {
       x: offset ? x + offset.x : x,
@@ -263,15 +264,5 @@ export default class IObject {
     } else {
       this.#current.stop();
     }
-  }
-
-  #getOffset() {
-    const motion = this.#motion;
-    const dir = this.#direction;
-    const sprite = this.#info.motions?.[motion];
-    if (!sprite) {
-      throw new Error(`Fail to get offset. No the motion. ${motion}`);
-    }
-    return this.#info.offset ?? sprite.offset ?? sprite[dir]?.offset;
   }
 }

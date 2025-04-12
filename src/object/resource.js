@@ -16,14 +16,12 @@ import ITexture from './texture.js';
 /**
  * @typedef ActionArea
  * @property {SpriteImage} [image]
- * @property {import('../coords/index.js').XY} [offset]
  * @property {Area[]} frames
  */
 
 /**
  * @typedef Motion
  * @property {SpriteImage} [image]
- * @property {import('../coords/index.js').XY} [offset]
  * @property {boolean} [loop]
  * @property {ActionArea} [up]
  * @property {ActionArea} [down]
@@ -35,7 +33,6 @@ import ITexture from './texture.js';
 /**
  * @typedef SpriteInfo
  * @property {SpriteImage} [image]
- * @property {import('../coords/index.js').XY} [offset]
  * @property {{[key: string]: Motion}} [motions]
  */
 

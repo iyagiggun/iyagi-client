@@ -15,10 +15,9 @@ export default class Coordinate {
 
   /**
    * @param {{ x?: number, y?: number, z?: number }} p
-   * @param {import('../../coords').XY} [offset]
+   * @param {XY} offset
    */
   set({ x, y, z }, offset) {
-    // TODO : mod
     if (typeof x === 'number') {
       this.container.x = x - (offset ? offset.x : 0);
     }
@@ -31,7 +30,7 @@ export default class Coordinate {
       this.z = z;
     }
     if (shouldChangeZ) {
-      this.container.zIndex = this.z * (MAX_Z_INDEX + 1) + this.container.y + this.container.height;
+      this.container.zIndex = this.z * (MAX_Z_INDEX + 1) + this.container.y - offset.y + this.container.height;
     }
   }
 
