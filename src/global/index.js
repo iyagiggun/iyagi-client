@@ -4,15 +4,12 @@ import { Application } from 'pixi.js';
  * @typedef {{
 *  container: import('pixi.js').Container;
 *  target: import('../object/index.js').IObject | null;
+*  release: () => void;
 * }} Controller
 */
 
 /** @type { Application= } */
 let app;
-/** @type { WebSocket= } */
-let ws;
-/** @type { string= } */
-let key;
 /** @type { Controller | null } */
 let controller = null;
 /** @type {import('../imessenger/index.js').Messenger} */
@@ -26,18 +23,6 @@ export default {
       throw new Error(ERR_NOT_INITED);
     }
     return app;
-  },
-  get ws() {
-    if (!ws) {
-      throw new Error(ERR_NOT_INITED);
-    }
-    return ws;
-  },
-  get key() {
-    if (!key) {
-      throw new Error(ERR_NOT_INITED);
-    }
-    return key;
   },
   get controller() {
     return controller;
@@ -56,13 +41,9 @@ export default {
   },
   /**
    * @param {Object} p
-   * @param {WebSocket} p.websocket
-   * @param {string} p.key
    * @param {import('../imessenger/index.js').Messenger} p.messenger
    */
   async init({
-    websocket,
-    key: _key,
     messenger: _messenger,
   }) {
     app = new Application();
@@ -70,8 +51,6 @@ export default {
       backgroundColor: 0x000000,
       resizeTo: window,
     });
-    ws = websocket;
-    key = _key;
     document.body.appendChild(app.canvas);
     messenger = _messenger;
   },

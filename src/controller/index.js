@@ -66,4 +66,9 @@ export default class IController {
   addEventListener(type, handler) {
     this.#et.addEventListener(type, handler);
   }
+
+  release() {
+    this.joystick.release();
+    this.gesture.release();
+  }
 }

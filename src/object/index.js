@@ -48,6 +48,15 @@ const control = (data) => {
   return Promise.resolve();
 };
 
+const release = () => {
+  const { controller, app } = global;
+  if (!controller) {
+    throw new Error('No controller.');
+  }
+  controller.release();
+  app.stage.removeChild(controller.container);
+};
+
 
 const remove = (data) => {
   const idx = objects.findIndex((obj) => obj.serial === data.target);
@@ -69,24 +78,26 @@ const motion = (data) => {
 };
 
 /**
- * @param {Message} msg
+ * @param {import('../scene/index.js').Message} msg
  * @return {Promise<void>}
  */
 export const recieve_object_event = (msg) => {
   switch(msg.type) {
-    case IMT.OBJECT_MOVE:
-      return move(msg.data);
-    case IMT.OBJECT_TALK:
-      return talk(msg.data);
     case IMT.OBJECT_CONTROL:
-      return control(msg.data);
-    case IMT.OBJECT_REMOVE:
-      return remove(msg.data);
-    case IMT.OBJECT_MOTION:
-      return motion(msg.data);
+    case IMT.OBJECT_RELEASE:
+      console.error('reeeee\');\'');
+      return release();
     default:
       return Promise.resolve();
   }
+};
+
+export default {
+  talk,
+  move,
+  remove,
+  motion,
+  control,
 };
 
 export { ObjectResource, IObject };

@@ -46,13 +46,13 @@ const load = async (data) => {
   sender.shard_loaded();
 };
 
-const focus = async (data) => {
-  if (data.speed > 0) {
-    await camera.move(data);
-  } else {
-    camera.point(data);
-  }
-};
+// const focus = async (data) => {
+//   if (data.speed > 0) {
+//     await camera.move(data);
+//   } else {
+//     camera.point(data);
+//   }
+// };
 
 /**
  * @param {*} data
@@ -76,9 +76,6 @@ const control = (data) => {
 };
 
 
-const object = (data) => {
-  console.error(data);
-};
 
 const play = () => {
   sender.shard_load();
@@ -94,12 +91,6 @@ const recieve = (msg) => {
     case IMT.SHARD_LOAD:
       return load(msg.data);
 
-    case IMT.CAMERA_FOCUS:
-      return focus(msg.data);
-
-    case IMT.SCENE_OBJECT:
-      return object(msg.data);
-
     case IMT.SCENE_CONTROL:
       return control(msg.data);
     default:
@@ -108,8 +99,8 @@ const recieve = (msg) => {
 };
 
 const init = () => {
-  reciever.add(recieve);
-  reciever.add(recieve_object_event);
+  // reciever.add(recieve);
+  // reciever.add(recieve_object_event);
 };
 
 export default {
