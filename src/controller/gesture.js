@@ -88,16 +88,18 @@ export default class Gesture {
   }
 
   /**
-   * @param {number} pointerId
+   * @param {number} [pointerId]
    */
   release(pointerId) {
-    if (pointerId !== this.#pointerId || this.#pointerId < 0) {
+    if (pointerId !== undefined && (pointerId !== this.#pointerId || this.#pointerId < 0)) {
       return;
     }
-    if (this.#gestureList.length === 0) {
-      this.#et.dispatchEvent(new CustomEvent('action', { detail: { gesture: 'tap' } }));
-    } else {
-      this.#et.dispatchEvent(new CustomEvent('action', { detail: { gesture: this.#gestureList.join('') } }));
+    if (pointerId !== undefined) {
+      if (this.#gestureList.length === 0) {
+        this.#et.dispatchEvent(new CustomEvent('action', { detail: { gesture: 'tap' } }));
+      } else {
+        this.#et.dispatchEvent(new CustomEvent('action', { detail: { gesture: this.#gestureList.join('') } }));
+      }
     }
     this.#container.removeEventListener('touchmove', this.#onTouchMove);
     this.#pointerId = -1;

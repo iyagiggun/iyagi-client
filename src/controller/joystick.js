@@ -110,11 +110,11 @@ export default class Joystick {
   }
 
   /**
-   * @param {number} pointerId
+   * @param {number} [pointerId]
    * @returns
    */
   release(pointerId) {
-    if (pointerId !== this.#pointerId || this.#pointerId < 0) {
+    if (pointerId !== undefined && (pointerId !== this.#pointerId || this.#pointerId < 0)) {
       return;
     }
     window.clearInterval(this.#intervalId);

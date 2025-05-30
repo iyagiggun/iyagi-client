@@ -1,6 +1,5 @@
 import ObjectResource from './resource.js';
 import IObject from './iobject/index.js';
-import { IMT } from '../const/index.js';
 import global from '../global/index.js';
 import { Rectangle } from 'pixi.js';
 
@@ -10,10 +9,10 @@ import { Rectangle } from 'pixi.js';
 export const objects = [];
 
 /**
- * @param {string} serial
+ * @param {string} id
  */
-const find = (serial) => {
-  const obj = objects.find((obj) => obj.serial === serial);
+const find = (id) => {
+  const obj = objects.find((obj) => obj.id === id);
   if (!obj) {
     throw new Error('Fail to find object.');
   }
@@ -59,7 +58,7 @@ const release = () => {
 
 
 const remove = (data) => {
-  const idx = objects.findIndex((obj) => obj.serial === data.target);
+  const idx = objects.findIndex((obj) => obj.id === data.id);
   if (idx >= 0) {
     objects.splice(idx, 1).forEach((removed) => {
       const parent = removed.container.parent;
@@ -77,27 +76,13 @@ const motion = (data) => {
   return Promise.resolve();
 };
 
-/**
- * @param {import('../scene/index.js').Message} msg
- * @return {Promise<void>}
- */
-export const recieve_object_event = (msg) => {
-  switch(msg.type) {
-    case IMT.OBJECT_CONTROL:
-    case IMT.OBJECT_RELEASE:
-      console.error('reeeee\');\'');
-      return release();
-    default:
-      return Promise.resolve();
-  }
-};
-
 export default {
   talk,
   move,
   remove,
   motion,
   control,
+  release,
 };
 
 export { ObjectResource, IObject };

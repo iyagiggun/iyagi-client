@@ -1,5 +1,6 @@
 import camera from '../camera/index.js';
 import { IMT } from '../const/index.js';
+import { effect } from '../effect/index.js';
 import object, { objects } from '../object/index.js';
 import { shard } from '../shard/index.js';
 
@@ -28,14 +29,13 @@ const ask = async ({
 
     case IMT.LIST:
       return data.list.reduce(
-        /**
-         * @param {Promise<void>} prev
-         * @param {import('../scene/index.js').Message} msg
-         */
         (prev, msg) => prev.then(() => ask({ message: msg, reply })), Promise.resolve());
 
     case IMT.SHARD_LOAD:
       return shard.load({ message, reply });
+
+    case IMT.SHARD_CLEAR:
+      return shard.clear();
 
     case IMT.CAMERA_FOCUS:
       return camera.move(data);
@@ -54,6 +54,15 @@ const ask = async ({
 
     case IMT.OBJECT_CONTROL:
       return object.control(data);
+
+    case IMT.OBJECT_RELEASE:
+      return object.release();
+
+    case IMT.EFFECT_FADE_IN:
+      return effect.fadeIn(data);
+
+    case IMT.EFFECT_FADE_OUT:
+      return effect.fadeOut(data);
 
     default: {
       console.error(message);

@@ -1,4 +1,3 @@
-import Coordinate from './coordinate.js';
 import { getMDKey } from '../texture.js';
 import { AnimatedSprite, Container } from 'pixi.js';
 import camera from '../../camera/index.js';
@@ -13,12 +12,10 @@ const DEFAULT_COMPLETE = () => undefined;
 
 export default class IObject {
 
-  /** @type {Direction} */
+  /** @type {import('../../coords/index.js').Direction} */
   #direction;
 
   #motion = 'base';
-
-  #coordinate;
 
   #info;
 
@@ -38,26 +35,24 @@ export default class IObject {
 
   /**
    * @param {Object} param
-   * @param {string} param.serial
+   * @param {string} param.id
    * @param {string=} param.name
    * @param {import('../texture.js').default} param.texture
    * @param {import('../resource.js').SpriteInfo} param.info
    * @param {import('../portrait.js').PortraitType} param.portrait
    */
   constructor({
-    serial,
+    id,
     name,
     texture,
     portrait,
     info,
   }) {
     this.container = new Container();
-    this.serial = serial;
+    this.id = id;
     this.name = name;
-    this.offset = { x: 0, y: 0 };
     this.#texture = texture;
     this.#direction = 'down';
-    this.#coordinate = new Coordinate(this.container);
     this.#portrait = portrait;
     this.#info = info;
     this.set(this.#motion, this.#direction);
@@ -65,7 +60,7 @@ export default class IObject {
 
   /**
    * @param {string} motion
-   * @param {Direction?} _direction
+   * @param {import('../../coords/index.js').Direction} _direction
    */
   set(motion, _direction) {
     const direction = _direction ?? this.#direction;
@@ -99,21 +94,27 @@ export default class IObject {
    * @param {number} x
    */
   set x(x) {
-    this.#coordinate.set({ x }, this.offset);
+    this.xyz = {
+      x,
+    };
   }
 
   /**
    * @param {number} y
    */
   set y(y) {
-    this.#coordinate.set({ y }, this.offset);
+    this.xyz = {
+      y,
+    };
   }
 
   /**
    * @param {{x? : number, y?: number}} xy
    */
   set xy(xy) {
-    this.#coordinate.set(xy, this.offset);
+    this.xyz = {
+      ...xy,
+    };
   }
 
   /**
@@ -127,25 +128,31 @@ export default class IObject {
   /**
    * @param {{x?: number, y?: number, z?: number}} xyz
    */
-  set xyz(xyz) {
-    this.#coordinate.set(xyz, this.offset);
+  set xyz({ x, y, z }) {
+    if (typeof x === 'number') {
+      this.container.x = x;
+    }
+    if (typeof y === 'number') {
+      this.container.y = y;
+    }
+    if (typeof z === 'number') {
+      this.container.zIndex = z;
+    }
   }
 
   /**
    * @return {{ x: number, y: number, z: number }}
    */
   get xyz() {
-    const offset = this.offset;
-    const { x, y, z } = this.#coordinate.get();
     return {
-      x: offset ? x + offset.x : x,
-      y: offset ? y + offset.y : y,
-      z,
+      x: this.container.x,
+      y: this.container.y,
+      z: this.container.zIndex,
     };
   }
 
   /**
-   * @param {Direction} dir
+   * @param {import('../../coords/index.js').Direction} dir
    */
   set direction(dir) {
     switch (dir) {
@@ -165,13 +172,14 @@ export default class IObject {
   }
 
   /**
-   * @param {import('../../coords/index.js').XY & {
+   * @param {import('../../coords/index.js').XYZ & {
    *  speed?: number;
    * }} p
    */
   move({
     x,
     y,
+    z,
     speed: _speed,
   }) {
     this.#complete();
@@ -182,20 +190,20 @@ export default class IObject {
       this.play();
 
       const tick = () => {
-        const { x: curX, y: curY } = this.xy;
+        const { x: curX, y: curY, z: curZ } = this.xyz;
 
         const diffX = x - curX;
         const diffY = y - curY;
         const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
 
-        const arrived = distance < speed;
+        const arrived = distance < speed || speed === 0;
 
         if (arrived) {
-          this.xy = { x, y };
+          this.xyz = { x, y, z };
         } else {
           const deltaX = Math.round(speed * (diffX / distance));
           const deltaY = Math.round(speed * (diffY / distance));
-          this.xy = { x: curX + deltaX, y: curY + deltaY };
+          this.xyz = { x: curX + deltaX, y: curY + deltaY, z: curZ + deltaY };
           camera.adjust({ x: deltaX, y: deltaY });
           // if (camera) {
           //   camera.point(name);
@@ -240,9 +248,7 @@ export default class IObject {
    *   speed: number
    * }} options
    */
-  play({
-    speed,
-  } = {}) {
+  play({ speed } = { speed: 0 }) {
     if ((this.#current instanceof AnimatedSprite) === false) {
       return;
     }
