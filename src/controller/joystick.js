@@ -118,7 +118,7 @@ export default class Joystick {
       return;
     }
     window.clearInterval(this.#intervalId);
-    if (performance.now() - this.#activateTime < 200) {
+    if (performance.now() - this.#activateTime < 200 && Math.abs(this.#delta.x) < 5 && Math.abs(this.#delta.y) < 5) {
       this.#et.dispatchEvent(new CustomEvent('interact'));
     }
     this.#pointerId = -1;

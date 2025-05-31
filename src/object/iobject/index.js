@@ -60,7 +60,7 @@ export default class IObject {
 
   /**
    * @param {string} motion
-   * @param {import('../../coords/index.js').Direction} _direction
+   * @param {import('../../coords/index.js').Direction} [_direction]
    */
   set(motion, _direction) {
     const direction = _direction ?? this.#direction;
@@ -174,6 +174,7 @@ export default class IObject {
   /**
    * @param {import('../../coords/index.js').XYZ & {
    *  speed?: number;
+   *  instant: boolean;
    * }} p
    */
   move({
@@ -181,6 +182,7 @@ export default class IObject {
     y,
     z,
     speed: _speed,
+    instant,
   }) {
     this.#complete();
 
@@ -196,7 +198,7 @@ export default class IObject {
         const diffY = y - curY;
         const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
 
-        const arrived = distance < speed || speed === 0;
+        const arrived = distance < speed || instant;
 
         if (arrived) {
           this.xyz = { x, y, z };

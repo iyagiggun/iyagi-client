@@ -58,15 +58,22 @@ const release = () => {
 
 
 const remove = (data) => {
-  const idx = objects.findIndex((obj) => obj.id === data.id);
-  if (idx >= 0) {
-    objects.splice(idx, 1).forEach((removed) => {
-      const parent = removed.container.parent;
-      if (parent){
-        parent.removeChild(removed.container);
-      }
-    });
+  const target = objects.find((obj) => obj.id === data.id);
+  if (target) {
+    const parent = target.container.parent;
+    if (parent){
+      parent.removeChild(target.container);
+    }
   }
+  // const idx = objects.findIndex((obj) => obj.id === data.id);
+  // if (idx >= 0) {
+  //   objects.splice(idx, 1).forEach((removed) => {
+  //     const parent = removed.container.parent;
+  //     if (parent){
+  //       parent.removeChild(removed.container);
+  //     }
+  //   });
+  // }
   return Promise.resolve();
 };
 

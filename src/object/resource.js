@@ -44,6 +44,11 @@ import ITexture from './texture.js';
  * @property {import('./portrait.js').PortraitParams=} portraits
  */
 
+/**
+ * @type {Map<string, IObject>}
+ */
+const pool = new Map();
+
 class ObjectResource {
   #params;
 
@@ -74,13 +79,19 @@ class ObjectResource {
    * @returns
    */
   stamp(id) {
-    return new IObject({
+    const cached = pool.get(id);
+    if (cached) {
+      return cached;
+    }
+    const created = new IObject({
       id,
       name: this.#params.name,
       texture: this.#texture,
       info: this.#params.sprite,
       portrait: this.#portrait,
     });
+    pool.set(id, created);
+    return created;
   }
 
   set key(_) {
