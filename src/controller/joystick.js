@@ -122,6 +122,7 @@ export default class Joystick {
       this.#et.dispatchEvent(new CustomEvent('interact'));
     }
     this.#pointerId = -1;
+    this.#delta = { x: 0, y: 0 };
     this.#intervalId = 0;
     this.#activateTime = -1;
     this.#container.removeEventListener('touchmove', this.#onTouchMove);
